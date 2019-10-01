@@ -148,8 +148,10 @@ public class SudokuIO {
     }
 
     private static int loadFromSingleLine(Grid grid, String line) {
-        boolean isStandard = (line.length() == 36);
+        boolean isStandard = (line.length() == 36) | (line.length() == 216);
         // Detect Sudoku Susser format (Although the SS cannot cut/past to itself)
+    if ( line.length() < 216 )
+    {
         if (line.endsWith("\t"))
             line = line.substring(0, line.length() - 1);
         boolean hasAlphaLabel = false;
@@ -165,8 +167,49 @@ public class SudokuIO {
             line = line.substring(line.length() - 36);
         else if (line.trim().length() >= 36)
             line = line.trim();
+    }
 
         if (line.length() >= 36) {
+    if ( line.length() >= 216 )
+    {
+            for (int i = 0; i < 36; i++) {
+                grid.setCellValue(i % 6, i / 6, 0);
+                Cell cell = grid.getCell(i % 6, i / 6);
+                cell.clearPotentialValues();
+            }
+            for (int i = 0; i < 216; i++) {
+                int cl = i / 6;  // cell
+                char ch = line.charAt(i);
+
+                if (ch >= '1' && ch <= '6') {
+                    int value = (ch - '0');
+                    Cell cell = grid.getCell(cl % 6, cl / 6);
+                    cell.addPotentialValue(value);
+                }
+            }
+            // fix naked singles
+            for (int i = 0; i < 36; i++) {
+                Cell cell = grid.getCell(i % 6, i / 6);
+                if ( cell.getPotentialValues().cardinality() == 1 ) {
+                    int singleclue = cell.getPotentialValues().nextSetBit(0);
+                    boolean isnakedsingle = true;
+                    for (Cell housecell : cell.getHouseCells()) {
+                        if ( housecell.hasPotentialValue(singleclue) ) {
+                            isnakedsingle = false;
+                            break;
+                        }
+                    }
+                    if ( isnakedsingle )
+                    {
+                        cell.setValue( singleclue);
+                        cell.clearPotentialValues();
+                    }
+                }
+            }
+            grid.setSukaku();
+    }
+    else
+    {
             int rowGap = (line.length() - 36) / 5;
             int srcIndex = 0;
             for (int y = 0; y < 6; y++) {
@@ -181,6 +224,7 @@ public class SudokuIO {
                 }
                 srcIndex += rowGap;
             }
+    }
             return (isStandard ? RES_OK : RES_WARN);
         }
         return RES_ERROR;

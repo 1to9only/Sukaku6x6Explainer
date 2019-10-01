@@ -106,6 +106,44 @@ public class hints {
                     break;
                 if (puzzle.length() >= 36) {
                     Grid grid = new Grid();
+                if (puzzle.length() >= 216)
+                {
+                    for (int i = 0; i < 36; i++) {
+                        grid.setCellValue(i % 6, i / 6, 0);
+                    }
+                    for (int i = 0; i < 216; i++) {
+                        int cl = i / 6;  // cell
+                        char ch = puzzle.charAt(i);
+
+                        if (ch >= '1' && ch <= '6') {
+                            int value = (ch - '0');
+                            Cell cell = grid.getCell(cl % 6, cl / 6);
+                            cell.addPotentialValue(value);
+                        }
+                    }
+                    // fix naked singles
+                    for (int i = 0; i < 36; i++) {
+                        Cell cell = grid.getCell(i % 6, i / 6);
+                        if ( cell.getPotentialValues().cardinality() == 1 ) {
+                            int singleclue = cell.getPotentialValues().nextSetBit(0);
+                            boolean isnakedsingle = true;
+                            for (Cell housecell : cell.getHouseCells()) {
+                                if ( housecell.hasPotentialValue(singleclue) ) {
+                                    isnakedsingle = false;
+                                    break;
+                                }
+                            }
+                            if ( isnakedsingle )
+                            {
+                                cell.setValue( singleclue);
+                                cell.getPotentialValues().clear();
+                            }
+                        }
+                    }
+                    grid.setSukaku();
+                }
+                else
+                {
                     for (int i = 0; i < 36; i++) {
                         char ch = puzzle.charAt(i);
                         if (ch >= '1' && ch <= '6') {
@@ -113,12 +151,14 @@ public class hints {
                             grid.setCellValue(i % 6, i / 6, value);
                         }
                     }
-                    System.out.println(puzzle);
-                    System.out.flush();
-
+                }
+                    System.out.println(puzzle); System.out.flush();
                     Solver solver = new Solver(grid);
                     solver.want = 0;
+                if (puzzle.length() >= 36 && puzzle.length() < 216)
+                {
                     solver.rebuildPotentialValues();
+                }
                     try {
                         solver.getHintsHint();
                     } catch (UnsupportedOperationException ex) {
