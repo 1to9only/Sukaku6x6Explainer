@@ -21,17 +21,17 @@ public class NumberOfValues implements WarningHintProducer {
     public void getHints(Grid grid, HintsAccumulator accu)
             throws InterruptedException {
         BitSet values = new BitSet(10);
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);
                 int value = cell.getValue();
                 if (value != 0)
                     values.set(value);
             }
         }
-        if (values.cardinality() < 8) {
+        if (values.cardinality() < 5) {
             String missingValues = "";
-            for (int v = 1; v <= 9; v++) {
+            for (int v = 1; v <= 6; v++) {
                 if (!values.get(v)) {
                     if (!missingValues.equals(""))
                         missingValues += ", ";

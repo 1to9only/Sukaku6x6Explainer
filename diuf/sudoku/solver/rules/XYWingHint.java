@@ -132,7 +132,7 @@ public class XYWingHint extends IndirectHint implements Rule, HasParentPotential
         Cell xyCell = initialGrid.getCell(this.xyCell.getX(), this.xyCell.getY());
         Cell xzCell = initialGrid.getCell(this.xzCell.getX(), this.xzCell.getY());
         Cell yzCell = initialGrid.getCell(this.yzCell.getX(), this.yzCell.getY());
-        for (int p = 1; p <= 9; p++) {
+        for (int p = 1; p <= 6; p++) {
             if (xyCell.hasPotentialValue(p) && !this.xyCell.hasPotentialValue(p))
                 result.add(new Potential(this.xyCell, p, false));
             if (xzCell.hasPotentialValue(p) && !this.xzCell.hasPotentialValue(p))

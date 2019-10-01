@@ -101,13 +101,13 @@ public class LockingHint extends IndirectHint implements Rule, HasParentPotentia
         Collection<Potential> result = new ArrayList<Potential>();
         // Add any potential of first region that are not in second region
         for (int i = 0; i < regions.length; i+= 2) {
-            for (int pos1 = 0; pos1 < 9; pos1++) {
+            for (int pos1 = 0; pos1 < 6; pos1++) {
                 Cell cell = regions[i].getCell(pos1);
                 Cell initCell = initialGrid.getCell(cell.getX(), cell.getY());
                 if (initCell.hasPotentialValue(value) && !cell.hasPotentialValue(value)) {
                     boolean isInRegion2 = false;
                     for (int j = 1; j < regions.length; j+= 2) {
-                        for (int pos2 = 0; pos2 < 9; pos2++) {
+                        for (int pos2 = 0; pos2 < 6; pos2++) {
                             Cell other = regions[j].getCell(pos2);
                             if (other.equals(cell))
                                 isInRegion2 = true;

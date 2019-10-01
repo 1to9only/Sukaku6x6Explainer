@@ -149,12 +149,12 @@ public class Solver {
     private <T extends Grid.Region> void cancelBy(Class<T> partType) {
         Grid.Region[] parts = grid.getRegions(partType);
         for (Grid.Region part : parts) {
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < 6; i++) {
                 Cell cell = part.getCell(i);
                 if (!cell.isEmpty()) {
                     int value = cell.getValue();
                     // Remove the cell value from the potential values of other cells
-                    for (int j = 0; j < 9; j++)
+                    for (int j = 0; j < 6; j++)
                         part.getCell(j).removePotentialValue(value);
                 }
             }
@@ -165,11 +165,11 @@ public class Solver {
      * Rebuild, for each empty cell, the set of potential values.
      */
     public void rebuildPotentialValues() {
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);
                 if (cell.getValue() == 0) {
-                    for (int value = 1; value <= 9; value++)
+                    for (int value = 1; value <= 6; value++)
                         cell.addPotentialValue(value);
                 }
             }
@@ -183,8 +183,8 @@ public class Solver {
      * Can be invoked after a new cell gets a value.
      */
     public void cancelPotentialValues() {
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);
                 if (cell.getValue() != 0)
                     cell.clearPotentialValues();
@@ -348,8 +348,8 @@ public class Solver {
     }
 
     private boolean isSolved() {
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 if (grid.getCellValue(x, y) == 0)
                     return false;
             }
@@ -366,7 +366,7 @@ public class Solver {
                 return -1;
             else if (d1 > d2)
                 return 1;
-            else 
+            else
                 return r1.getName().compareTo(r2.getName());
         }
 
@@ -499,7 +499,7 @@ public class Solver {
                 } catch (InterruptedException willHappen) {}
                 Hint hint = accu.getHint();
                 if (hint == null) {
-		    difficulty = 20.0;
+                    difficulty = 20.0;
                     break;
                 }
                 assert hint instanceof Rule;
@@ -508,19 +508,89 @@ public class Solver {
                 if (ruleDiff > difficulty)
                     difficulty = ruleDiff;
                 hint.apply();
-		if (pearl == 0.0) {
-		    if (diamond == 0.0)
-			diamond = difficulty;
-		    if (hint.getCell() != null) {
+                if (pearl == 0.0) {
+                    if (diamond == 0.0)
+                        diamond = difficulty;
+                    if (hint.getCell() != null) {
                         if (want == 'd' && difficulty > diamond) {
-		            difficulty = 20.0;
+                            difficulty = 20.0;
                             break;
                         }
-		        pearl = difficulty;
-		    }
+                        pearl = difficulty;
+                    }
                 }
-		else if (want != 0 && difficulty > pearl) {
-		    difficulty = 20.0;
+                else if (want != 0 && difficulty > pearl) {
+                    difficulty = 20.0;
+                    break;
+                }
+            }
+        } finally {
+            backup.copyTo(grid);
+        }
+    }
+
+    public void getHintsHint() {
+        Grid backup = new Grid();
+        grid.copyTo(backup);
+        try {
+            difficulty = Double.NEGATIVE_INFINITY;
+            pearl = 0.0;
+            diamond = 0.0;
+            while (!isSolved()) {
+                SingleHintAccumulator accu = new SingleHintAccumulator();
+                try {
+                    for (HintProducer producer : directHintProducers)
+                        producer.getHints(grid, accu);
+                    for (IndirectHintProducer producer : indirectHintProducers)
+                        producer.getHints(grid, accu);
+                    for (IndirectHintProducer producer : chainingHintProducers)
+                        producer.getHints(grid, accu);
+                    for (IndirectHintProducer producer : chainingHintProducers2)
+                        producer.getHints(grid, accu);
+                    for (IndirectHintProducer producer : advancedHintProducers)
+                        producer.getHints(grid, accu);
+                    for (IndirectHintProducer producer : experimentalHintProducers)
+                        producer.getHints(grid, accu);
+                } catch (InterruptedException willHappen) {}
+                Hint hint = accu.getHint();
+                if (hint == null) {
+                    difficulty = 20.0;
+                    break;
+                }
+                assert hint instanceof Rule;
+                Rule rule = (Rule)hint;
+                double ruleDiff = rule.getDifficulty();
+                if (ruleDiff > difficulty)
+                    difficulty = ruleDiff;
+                hint.apply();
+
+                String s = "";
+                for (int i = 0; i < 36; i++) {
+                    int n = grid.getCellValue(i % 6, i / 6);
+                    s += (n==0)?".":n;
+                }
+                s += " ";
+                int w = (int)((ruleDiff + 0.05) * 10);
+                int p = w % 10;
+                w /= 10;
+                s += w + "." + p;
+                s += ", " + hint.toString();
+                System.out.println(s);
+                System.out.flush();
+
+                if (pearl == 0.0) {
+                    if (diamond == 0.0)
+                        diamond = difficulty;
+                    if (hint.getCell() != null) {
+                        if (want == 'd' && difficulty > diamond) {
+                            difficulty = 20.0;
+                            break;
+                        }
+                        pearl = difficulty;
+                    }
+                }
+                else if (want != 0 && difficulty > pearl) {
+                    difficulty = 20.0;
                     break;
                 }
             }

@@ -29,8 +29,8 @@ public class SolutionHint extends WarningHint {
     @Override
     public Map<Cell, BitSet> getGreenPotentials(int viewNum) {
         Map<Cell, BitSet> result = new HashMap<Cell,BitSet>();
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 int value = solution.getCellValue(x, y);
                 Cell cell = grid.getCell(x, y);
                 result.put(cell, SingletonBitSet.create(value));

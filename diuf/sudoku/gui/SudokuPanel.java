@@ -31,7 +31,7 @@ public class SudokuPanel extends JPanel {
     private int GRID_GAP_SIZE = 2;
     private int LEGEND_GAP_SIZE = 42;
     private int CELL_PAD = (CELL_OUTER_SIZE - CELL_INNER_SIZE) / 2;
-    private int GRID_SIZE = CELL_OUTER_SIZE * 9;
+    private int GRID_SIZE = CELL_OUTER_SIZE * 6;
     private String FONT_NAME = "Verdana";
     private int FONT_SIZE_SMALL = 12;
     private int FONT_SIZE_BIG = 36;
@@ -86,7 +86,7 @@ public class SudokuPanel extends JPanel {
     }
 
     private void initialize() {
-        this.addMouseListener(new java.awt.event.MouseAdapter() {   
+        this.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
                 setFocusedCell(null);
@@ -135,33 +135,33 @@ public class SudokuPanel extends JPanel {
                     setFocusedCandidate(0);
             }
         });
-        this.addKeyListener(new java.awt.event.KeyAdapter() {   
+        this.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
                 int code = e.getKeyCode();
                 if (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT ||
                         code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN) {
                     setFocusedCell(null);
-                    int x = 4;
-                    int y = 4;
+                    int x = 2;
+                    int y = 2;
                     if (selectedCell != null) {
                         x = selectedCell.getX();
                         y = selectedCell.getY();
                     }
                     if (code == KeyEvent.VK_LEFT)
-                        x = (x + 8) % 9;
+                        x = (x + 5) % 6;
                     else if (code == KeyEvent.VK_RIGHT)
-                        x = (x + 1) % 9;
+                        x = (x + 1) % 6;
                     else if (code == KeyEvent.VK_UP)
-                        y = (y + 8) % 9;
+                        y = (y + 5) % 6;
                     else if (code == KeyEvent.VK_DOWN)
-                        y = (y + 1) % 9;
+                        y = (y + 1) % 6;
                     setFocusedCandidate(0);
                     if (selectedCell == null) {
                         // Select the central cell
-                        setSelectedCell(grid.getCell(4, 4));
-                        x = 4;
-                        y = 4;
+                        setSelectedCell(grid.getCell(2, 2));
+                        x = 2;
+                        y = 2;
                     } else {
                         setSelectedCell(grid.getCell(x, y));
                     }
@@ -189,7 +189,7 @@ public class SudokuPanel extends JPanel {
                 boolean isProcessed = false;
                 if (selectedCell != null) {
                     char ch = e.getKeyChar();
-                    if (ch >= '1' && ch <= '9') {
+                    if (ch >= '1' && ch <= '6') {
                         int value = ch - '0';
                         engine.cellValueTyped(selectedCell, value);
                         repaint();
@@ -221,7 +221,7 @@ public class SudokuPanel extends JPanel {
     private Cell getCellAt(int x, int y) {
         int cx = (x - LEGEND_GAP_SIZE) / CELL_OUTER_SIZE;
         int cy = (y - GRID_GAP_SIZE) / CELL_OUTER_SIZE;
-        if (cx < 0 || cx >= 9 || cy < 0 || cy >= 9)
+        if (cx < 0 || cx >= 6 || cy < 0 || cy >= 6)
             return null;
         return grid.getCell(cx, cy);
     }
@@ -230,7 +230,7 @@ public class SudokuPanel extends JPanel {
         // Get cell's corner
         int cx = (x - LEGEND_GAP_SIZE) / CELL_OUTER_SIZE;
         int cy = (y - GRID_GAP_SIZE) / CELL_OUTER_SIZE;
-        if (cx < 0 || cx >= 9 || cy < 0 || cy >= 9)
+        if (cx < 0 || cx >= 6 || cy < 0 || cy >= 6)
             return 0;
         Cell cell = grid.getCell(cx, cy);
         if (!cell.equals(this.selectedCell))
@@ -254,7 +254,7 @@ public class SudokuPanel extends JPanel {
 
     public void setSudokuGrid(Grid sudokuGrid) {
         this.grid = sudokuGrid;
-        this.selectedCell = sudokuGrid.getCell(4, 4);
+        this.selectedCell = sudokuGrid.getCell(2, 2);
     }
 
     public Collection<Cell> getGreenCells() {
@@ -443,7 +443,7 @@ public class SudokuPanel extends JPanel {
         initGraphics(g2);
         paintLegend(g);
         AffineTransform oldTransform = g2.getTransform();
-        AffineTransform translate = 
+        AffineTransform translate =
             AffineTransform.getTranslateInstance(LEGEND_GAP_SIZE, GRID_GAP_SIZE);
         g2.transform(translate);
         g.clearRect(0, 0, GRID_SIZE, GRID_SIZE);
@@ -478,7 +478,7 @@ public class SudokuPanel extends JPanel {
             g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-            g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);    
+            g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
@@ -486,7 +486,7 @@ public class SudokuPanel extends JPanel {
             g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
             g2.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
             g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-            g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);    
+            g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
             g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
@@ -497,7 +497,7 @@ public class SudokuPanel extends JPanel {
         g.setFont(legendFont);
         g.setColor(new Color(0, 32, 64));
         Settings settings = Settings.getInstance();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             String xLegend;
             if (settings.isRCNotation())
                 xLegend = "C" + (i + 1);
@@ -512,15 +512,15 @@ public class SudokuPanel extends JPanel {
                     LEGEND_GAP_SIZE / 2, CELL_OUTER_SIZE * i + GRID_GAP_SIZE + CELL_OUTER_SIZE / 2);
             drawStringCentered(g, xLegend,
                     LEGEND_GAP_SIZE + i * CELL_OUTER_SIZE + CELL_OUTER_SIZE / 2,
-                    CELL_OUTER_SIZE * 9 + GRID_GAP_SIZE + LEGEND_GAP_SIZE / 2);
+                    CELL_OUTER_SIZE * 6 + GRID_GAP_SIZE + LEGEND_GAP_SIZE / 2);
         }
     }
 
     private void paintSelectionAndFocus(Graphics g) {
         Rectangle clip = g.getClipBounds();
         Rectangle cellRect = new Rectangle();
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 readCellRectangle(x, y, cellRect);
                 if (clip.intersects(cellRect)) {
                     Cell cell = grid.getCell(x, y);
@@ -532,7 +532,7 @@ public class SudokuPanel extends JPanel {
     }
 
     private void paintGrid(Graphics g) {
-        for (int i = 0; i <= 9; i++) {
+        for (int i = 0; i <= 6; i++) {
             int lineWidth;
             if (i % 3 == 0) {
                 lineWidth = 4;
@@ -542,7 +542,17 @@ public class SudokuPanel extends JPanel {
                 g.setColor(Color.blue.darker());
             }
             int offset = lineWidth / 2;
+            // vertical lines
             g.fillRect(i * CELL_OUTER_SIZE - offset, 0 - offset, lineWidth, GRID_SIZE + lineWidth);
+            if (i % 2 == 0) {
+                lineWidth = 4;
+                g.setColor(Color.black);
+            } else {
+                lineWidth = 2;
+                g.setColor(Color.blue.darker());
+            }
+            offset = lineWidth / 2;
+            // horizontal lines
             g.fillRect(0 - offset, i * CELL_OUTER_SIZE - offset, GRID_SIZE + lineWidth, lineWidth);
         }
     }
@@ -561,19 +571,19 @@ public class SudokuPanel extends JPanel {
                             y = row.getRowNum();
                             h = 1;
                             x = 0;
-                            w = 9;
+                            w = 6;
                         } else if (region instanceof Grid.Column) {
                             Grid.Column column = (Grid.Column)region;
                             x = column.getColumnNum();
                             w = 1;
                             y = 0;
-                            h = 9;
+                            h = 6;
                         } else {
                             Grid.Block square = (Grid.Block)region;
                             x = square.getHIndex() * 3;
-                            y = square.getVIndex() * 3;
+                            y = square.getVIndex() * 2;
                             w = 3;
-                            h = 3;
+                            h = 2;
                         }
                         g.setColor(colors[index % 2]);
                         for (int s = -2 + rev; s <= 2; s+= 2) {
@@ -596,15 +606,15 @@ public class SudokuPanel extends JPanel {
     private void paintCellsPotentials(Graphics g) {
         Rectangle clip = g.getClipBounds();
         Rectangle cellRect = new Rectangle();
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 readCellRectangle(x, y, cellRect);
                 if (clip.intersects(cellRect)) {
                     Cell cell = grid.getCell(x, y);
                     // Paint potentials
                     int index = 0;
                     g.setFont(smallFont);
-                    for (int value = 1; value <= 9; value++) {
+                    for (int value = 1; value <= 6; value++) {
                         boolean paintIt = Settings.getInstance().isShowingCandidates();
                         if (cell == this.selectedCell && value == this.focusedCandidate) {
                             // Paint magenta selection
@@ -636,8 +646,8 @@ public class SudokuPanel extends JPanel {
     private void paintCellsValues(Graphics g) {
         Rectangle clip = g.getClipBounds();
         Rectangle cellRect = new Rectangle();
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 readCellRectangle(x, y, cellRect);
                 if (clip.intersects(cellRect)) {
                     Cell cell = grid.getCell(x, y);
@@ -645,7 +655,7 @@ public class SudokuPanel extends JPanel {
                     if (cell.getValue() != 0) {
                         g.setFont(bigFont);
                         int cx = x * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;
-                        int cy = y * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;          
+                        int cy = y * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;
                         initValueColor(g, cell);
                         drawStringCentered(g, "" + cell.getValue(), cx, cy);
                     }

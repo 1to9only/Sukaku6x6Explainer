@@ -42,26 +42,26 @@ public class Fisherman implements IndirectHintProducer {
 
         // Get occurance count for each value
         int[] occurances = new int[10];
-        for (int value = 1; value <= 9; value++)
+        for (int value = 1; value <= 6; value++)
             occurances[value] = grid.getCountOccurancesOfValue(value);
 
         Grid.Region[] parts = grid.getRegions(partType1);
         // Iterate on lines tuples
-        Permutations perm = new Permutations(degree, 9);
+        Permutations perm = new Permutations(degree, 6);
         while (perm.hasNext()) {
             int[] indexes = perm.nextBitNums();
             assert indexes.length == degree;
 
-            BitSet myIndexes = new BitSet(9);
+            BitSet myIndexes = new BitSet(10);
             for (int i = 0; i < indexes.length; i++)
                 myIndexes.set(indexes[i]);
 
             // Iterate on values
-            for (int value = 1; value <= 9; value++) {
+            for (int value = 1; value <= 6; value++) {
 
                 // Pattern is only possible if there are at least (degree * 2) missing occurances
                 // of the value.
-                if (occurances[value] + degree * 2 <= 9) {
+                if (occurances[value] + degree * 2 <= 6) {
 
                     // Check for exactly the same positions of the value in all lines
                     BitSet[] positions = new BitSet[degree];
@@ -82,14 +82,14 @@ public class Fisherman implements IndirectHintProducer {
     }
 
     private <S extends Grid.Region,T extends Grid.Region> IndirectHint createFishHint(
-            Grid grid, Class<S> otherPartType, Class<T> myPartType, BitSet otherIndexes, 
+            Grid grid, Class<S> otherPartType, Class<T> myPartType, BitSet otherIndexes,
             BitSet myIndexes, int value) {
         Grid.Region[] myParts = grid.getRegions(myPartType);
         Grid.Region[] otherParts = grid.getRegions(otherPartType);
         // Build parts
         List<Grid.Region> parts1 = new ArrayList<Grid.Region>();
         List<Grid.Region> parts2 = new ArrayList<Grid.Region>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             if (otherIndexes.get(i))
                 parts1.add(otherParts[i]);
             if (myIndexes.get(i))
@@ -105,8 +105,8 @@ public class Fisherman implements IndirectHintProducer {
         // Build highlighted potentials and cells
         List<Cell> cells = new ArrayList<Cell>();
         Map<Cell,BitSet> cellPotentials = new HashMap<Cell,BitSet>();
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
                 if (myIndexes.get(i) && otherIndexes.get(j)) {
                     Cell cell = myParts[i].getCell(j);
                     if (cell.hasPotentialValue(value)) {
@@ -121,13 +121,13 @@ public class Fisherman implements IndirectHintProducer {
 
         // Build removable potentials
         Map<Cell,BitSet> cellRemovablePotentials = new HashMap<Cell,BitSet>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             if (myIndexes.get(i)) {
                 // Check if value appears outside from otherIndexes
                 BitSet potentialPositions = myParts[i].copyPotentialPositions(value);
                 potentialPositions.andNot(otherIndexes);
                 if (!potentialPositions.isEmpty()) {
-                    for (int j = 0; j < 9; j++) {
+                    for (int j = 0; j < 6; j++) {
                         if (potentialPositions.get(j))
                             cellRemovablePotentials.put(myParts[i].getCell(j),
                                     SingletonBitSet.create(value));

@@ -20,9 +20,9 @@ import diuf.sudoku.*;
  * The support for formats is minimal and quick&dirty.
  * Only plain text formats are supported when reading:
  * <ul>
- * <li>A single line of 81 characters (all characters not in the
- * '1' - '9' range is considered as an empty cell).
- * <li>9 lines of 9 characters.
+ * <li>A single line of 36 characters (all characters not in the
+ * '1' - '6' range is considered as an empty cell).
+ * <li>6 lines of 6 characters.
  * <li>Other multi-lines formats, with more than one character per cell,
  * or more than one line per row, or even with a few characters between
  * blocks might be supported, but there is no warranty. If a given format
@@ -31,7 +31,7 @@ import diuf.sudoku.*;
  * <p>
  * When writing, the following format is used:
  * <ul>
- * <li>9 lines of 9 characters
+ * <li>6 lines of 6 characters
  * <li>empty cells are represented by a '.'
  * </ul>
  */
@@ -50,13 +50,13 @@ public class SudokuIO {
         LineNumberReader lineReader = new LineNumberReader(reader);
         String line = lineReader.readLine();
         while (line != null) {
-            if (line.length() >= 9)
+            if (line.length() >= 6)
                 lines.add(line);
             else
                 isValid = false;
             line = lineReader.readLine();
         }
-        if (lines.size() >= 9 && lines.size() <= 30) {
+        if (lines.size() >= 6 && lines.size() <= 30) {
             String[] arrLines = new String[lines.size()];
             lines.toArray(arrLines);
             for (int i = 0; i < arrLines.length; i++)
@@ -75,11 +75,11 @@ public class SudokuIO {
     }
 
     private static int loadFromLines(Grid grid, String[] lines) {
-        boolean isStandard = (lines.length == 9);
+        boolean isStandard = (lines.length == 6);
 
-        int lineSize = lines.length / 9;
+        int lineSize = lines.length / 6;
         int loffset = (lineSize - 1) / 2;
-        int borderLines = lines.length - 9 * lineSize;
+        int borderLines = lines.length - 6 * lineSize;
         if (borderLines < 0)
             borderLines = 0;
         int outerLines; // Number of lines before the grid
@@ -92,7 +92,7 @@ public class SudokuIO {
             innerLines = borderLines / 2;
         }
         int index = outerLines + loffset;
-        for (int y = 0; y < 9; y++) {
+        for (int y = 0; y < 6; y++) {
             /*
              * This is very ugly code, without real logic. Maybe a case-by-case version
              * would be more understandable. Or I should try some real AI stuff...
@@ -100,35 +100,35 @@ public class SudokuIO {
             String line = lines[index];
 
             // Check line format
-            if (line.length() != 9)
+            if (line.length() != 6)
                 isStandard = false;
             for (int i = 0; i < line.length(); i++) {
                 char ch = line.charAt(i);
-                if (ch != '.' && (ch < '0' || ch > '9'))
+                if (ch != '.' && (ch < '0' || ch > '6'))
                     isStandard = false;
             }
 
             // Read line
-            int cellSize = (line.length() + 1) / 9;
-            int borderChars = line.length() - 9 * cellSize;
+            int cellSize = (line.length() + 1) / 6; if ( cellSize > 2 ) { cellSize = 2; }
+            int borderChars = line.length() - 6 * cellSize;
             if (borderChars < 0)
                 borderChars = 0;
             int outerChars, innerChars;
-            if (borderChars % 4 == 0 || (borderChars % 4 == 3 && cellSize == 2 && borderChars > 4)) {
-                innerChars = (borderChars + 1) / 4;
-                outerChars = (borderChars - innerChars * 2) / 2;
+            if (borderChars % 3 == 0 || (borderChars % 3 == 2 && cellSize == 2 && borderChars > 3)) {
+                innerChars = (borderChars + 1) / 3;
+                outerChars = (borderChars - innerChars) / 2;
             } else {
                 outerChars = 0;
                 // The last cell, if cell size > 1, may only have half its size
                 innerChars = (borderChars + cellSize / 2) / 2;
             }
             int pos = outerChars;
-            for (int x = 0; x < 9; x++) {
+            for (int x = 0; x < 6; x++) {
                 for (int offset = 0; offset < cellSize; offset++) {
                     if (pos + offset < line.length()) {
                         char ch = line.charAt(pos + offset);
                         int value = 0;
-                        if (ch >= '1' && ch <= '9')
+                        if (ch >= '1' && ch <= '6')
                             value = ch - '0';
                         if (offset == 0 || value > 0)
                             grid.setCellValue(x, y, value);
@@ -136,44 +136,44 @@ public class SudokuIO {
                 }
 
                 pos += cellSize;
-                if (x == 2 || x == 5)
+                if (x == 2)
                     pos += innerChars;
             }
 
             index += lineSize;
-            if (y == 2 || y == 5)
+            if (y == 1 || y == 3)
                 index += innerLines;
         }
         return (isStandard ? RES_OK : RES_WARN);
     }
 
     private static int loadFromSingleLine(Grid grid, String line) {
-        boolean isStandard = (line.length() == 81);
+        boolean isStandard = (line.length() == 36);
         // Detect Sudoku Susser format (Although the SS cannot cut/past to itself)
         if (line.endsWith("\t"))
             line = line.substring(0, line.length() - 1);
         boolean hasAlphaLabel = false;
-        for (int i = 0; i < line.length() - 81; i++) {
+        for (int i = 0; i < line.length() - 36; i++) {
             if (Character.isLetter(line.charAt(i)))
                 hasAlphaLabel = true;
         }
-        for (int i = line.length() - 81; i < line.length(); i++) {
+        for (int i = line.length() - 36; i < line.length(); i++) {
             if (i >= 0 && Character.isLetter(line.charAt(i)))
                 hasAlphaLabel = false;
         }
-        if (hasAlphaLabel && line.length() > 81)
-            line = line.substring(line.length() - 81);
-        else if (line.trim().length() >= 81)
+        if (hasAlphaLabel && line.length() > 36)
+            line = line.substring(line.length() - 36);
+        else if (line.trim().length() >= 36)
             line = line.trim();
 
-        if (line.length() >= 81) {
-            int rowGap = (line.length() - 81) / 8;
+        if (line.length() >= 36) {
+            int rowGap = (line.length() - 36) / 5;
             int srcIndex = 0;
-            for (int y = 0; y < 9; y++) {
-                for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 6; y++) {
+                for (int x = 0; x < 6; x++) {
                     char ch = line.charAt(srcIndex++);
                     int value = 0;
-                    if (ch >= '1' && ch <= '9')
+                    if (ch >= '1' && ch <= '6')
                         value = ch - '0';
                     else if (ch != '.' && ch != '0')
                         isStandard = false;
@@ -187,8 +187,8 @@ public class SudokuIO {
     }
 
     private static void saveToWriter(Grid grid, Writer writer) throws IOException {
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 int value = grid.getCellValue(x, y);
                 int ch = '.';
                 if (value > 0)

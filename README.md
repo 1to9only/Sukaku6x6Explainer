@@ -1,25 +1,20 @@
-# SudokuExplainer (SE)
+# Sudoku6x6Explainer
 
-## 1.2.1
+Sudoku6x6Explainer is my modifications to SudokuExplainer to solve 6x6 sudokus, with blocks of 2 rows x 3 columns.
 
-Nicolas Juillerat's SudokuExplainer
+There is some discussion about hard 6x6 sudokus here: http://forum.enjoysudoku.com/hardest-6x6-t35607.html
 
-## 1.2.1.3
-
-gsf's (Glenn Fowler) serate modifications from: http://gsf.cococlyde.org/download/sudoku/serate.tgz used to rate sudoku puzzles for the Patterns Game: http://forum.enjoysudoku.com/patterns-game-t6290.html
-
-The Java binary can be downloaded from: http://gsf.cococlyde.org/download/sudoku/SudokuExplainer.jar
+This version of Sudoku6x6Explainer was first released here: http://forum.enjoysudoku.com/post273912.html (2 January 2019).
 
 ## Usage - GUI
 
-  java.exe -jar SudokuExplainer.jar
+  java.exe -jar Sudoku6x6Explainer.jar
 
 ## Usage - serate
 
-  java.exe -Xrs -Xmx500m -cp SudokuExplainer.jar diuf.sudoku.test.serate --format="%g ED=%r/%p/%d" --input=puzzles.txt --output=output.txt
+ java.exe -Xrs -Xmx500m -cp Sudoku6x6Explainer.jar diuf.sudoku.test.serate --format="%g ED=%r/%p/%d" --input=puzzles.txt --output=puzzles.rated.txt
 
-## Usage - manual
+## Usage - hints
 
-  java.exe -cp SudokuExplainer.jar diuf.sudoku.test.serate -m
-
+  java.exe -Xrs -Xmx500m -cp Sudoku6x6Explainer.jar diuf.sudoku.test.hints --input=puzzle.txt
 

@@ -112,8 +112,8 @@ public class BruteForceAnalysis implements WarningHintProducer {
      * @return whether the grid has been solved
      */
     private static boolean isSolved(Grid grid) {
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 if (grid.getCellValue(x, y) == 0)
                     return false;
             }
@@ -174,8 +174,8 @@ public class BruteForceAnalysis implements WarningHintProducer {
          */
         Cell leastCell = null;
         int leastCardinality = 10;
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);
                 if (cell.getValue() == 0) {
                     int cardinality = cell.getPotentialValues().cardinality();
@@ -188,16 +188,16 @@ public class BruteForceAnalysis implements WarningHintProducer {
         }
         // (3) Try each possible value for that cell
         Grid savePoint = new Grid();
-        int startValue = (isReverse ? 8 : 0);
-        int stopValue = (isReverse ? -1 : 9);
+        int startValue = (isReverse ? 5 : 0);
+        int stopValue = (isReverse ? -1 : 6);
         int delta = (isReverse ? -1 : 1);
         int firstValue = 0;
         if (rnd != null)
-            firstValue = rnd.nextInt(9);
+            firstValue = rnd.nextInt(6);
         for (int value0 = startValue; value0 != stopValue; value0 += delta) {
             int value = value0 + 1;
             if (rnd != null) // Combine with random choice if random generator given
-                value = ((value0 + firstValue) % 9) + 1;
+                value = ((value0 + firstValue) % 6) + 1;
             if (leastCell.hasPotentialValue(value)) {
                 grid.copyTo(savePoint);
                 leastCell.setValueAndCancel(value);
@@ -225,9 +225,9 @@ public class BruteForceAnalysis implements WarningHintProducer {
     private boolean isFillable(Grid grid) {
         for (Class<? extends Grid.Region> regionType : grid.getRegionTypes()) {
             Grid.Region[] regions = grid.getRegions(regionType);
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < 6; i++) {
                 Grid.Region region = regions[i];
-                for (int value = 1; value <= 9; value++) {
+                for (int value = 1; value <= 6; value++) {
                     if (!region.contains(value) && region.getPotentialPositions(value).isEmpty())
                         return false; // No room for the value in the region
                 }

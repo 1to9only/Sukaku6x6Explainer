@@ -41,7 +41,7 @@ public class NakedSet implements IndirectHintProducer {
         // Iterate on parts
         for (Grid.Region region : regions) {
             if (region.getEmptyCellCount() >= degree * 2) {
-                Permutations perm = new Permutations(degree, 9);
+                Permutations perm = new Permutations(degree, 6);
                 // Iterate on tuples of positions
                 while (perm.hasNext()) {
                     int[] indexes = perm.nextBitNums();
@@ -58,7 +58,7 @@ public class NakedSet implements IndirectHintProducer {
                         potentialValues[i] = cells[i].getPotentialValues();
 
                     // Look for a common tuple of potential values, with same degree
-                    BitSet commonPotentialValues = 
+                    BitSet commonPotentialValues =
                         CommonTuples.searchCommonTuple(potentialValues, degree);
                     if (commonPotentialValues != null) {
                         // Potential hint found
@@ -76,7 +76,7 @@ public class NakedSet implements IndirectHintProducer {
         // Build value list
         int[] values = new int[degree];
         int dstIndex = 0;
-        for (int value = 1; value <= 9; value++) {
+        for (int value = 1; value <= 6; value++) {
             if (commonPotentialValues.get(value))
                 values[dstIndex++] = value;
         }
@@ -90,12 +90,12 @@ public class NakedSet implements IndirectHintProducer {
         }
         // Build removable potentials
         Map<Cell,BitSet> cellRemovePValues = new HashMap<Cell,BitSet>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             Cell otherCell = region.getCell(i);
             if (!Arrays.asList(cells).contains(otherCell)) {
                 // Get removable potentials
                 BitSet removablePotentials = new BitSet(10);
-                for (int value = 1; value <= 9; value++) {
+                for (int value = 1; value <= 6; value++) {
                     if (commonPotentialValues.get(value) && otherCell.hasPotentialValue(value))
                         removablePotentials.set(value);
                 }

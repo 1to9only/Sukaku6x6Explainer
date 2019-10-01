@@ -22,7 +22,7 @@ public class HiddenSetHint extends IndirectHint implements Rule, HasParentPotent
     private final Map<Cell, BitSet> highlightPotentials;
     private final Grid.Region region;
 
-    
+
     public HiddenSetHint(IndirectHintProducer rule, Cell[] cells,
             int[] values, Map<Cell, BitSet> highlightPotentials,
             Map<Cell, BitSet> removePotentials, Grid.Region region) {
@@ -81,10 +81,10 @@ public class HiddenSetHint extends IndirectHint implements Rule, HasParentPotent
 
     public Collection<Potential> getRuleParents(Grid initialGrid, Grid currentGrid) {
         Collection<Potential> result = new ArrayList<Potential>();
-        BitSet myPositions = new BitSet(9);
+        BitSet myPositions = new BitSet(10);
         for (int i = 0; i < values.length; i++)
             myPositions.or(region.getPotentialPositions(values[i]));
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             if (!myPositions.get(i)) {
                 Cell cell = region.getCell(i);
                 Cell initialCell = initialGrid.getCell(cell.getX(), cell.getY());

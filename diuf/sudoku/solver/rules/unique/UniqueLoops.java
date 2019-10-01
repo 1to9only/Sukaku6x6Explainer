@@ -52,8 +52,8 @@ public class UniqueLoops implements IndirectHintProducer {
 
     private List<UniqueLoopHint> getHints(Grid grid) {
         List<UniqueLoopHint> result = new ArrayList<UniqueLoopHint>();
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);
                 BitSet potentials = cell.getPotentialValues();
                 if (potentials.cardinality() == 2) {
@@ -147,7 +147,7 @@ public class UniqueLoops implements IndirectHintProducer {
         for (Class<? extends Grid.Region> regionType : grid.getRegionTypes()) {
             if (!regionType.equals(lastRegionType)) {
                 Grid.Region region = grid.getRegionAt(regionType, cell.getX(), cell.getY());
-                for (int i = 0; i < 9; i++) {
+                for (int i = 0; i < 6; i++) {
                     Cell next = region.getCell(i);
                     if (loop.get(0).equals(next) && loop.size() >= 4) {
                         // Yeah, the loop is closed. Save a copy
@@ -292,7 +292,7 @@ public class UniqueLoops implements IndirectHintProducer {
                     // Look for naked sets
                     if (degree * 2 <= nbEmptyCells) {
                         // Look on combinations of cells that include c1 but not c2
-                        Permutations perm2 = new Permutations(degree, 9);
+                        Permutations perm2 = new Permutations(degree, 6);
                         while (perm2.hasNext()) {
                             int[] indexes = perm2.nextBitNums();
                             assert indexes.length == degree;
@@ -320,7 +320,7 @@ public class UniqueLoops implements IndirectHintProducer {
                                 }
                                 if (nakedSet.cardinality() == degree) {
                                     // Look for a common tuple of potential values, with same degree
-                                    BitSet commonPotentialValues = 
+                                    BitSet commonPotentialValues =
                                         CommonTuples.searchCommonTuple(potentials, degree);
                                     if (commonPotentialValues != null) {
                                         // Potential naked set found
@@ -337,7 +337,7 @@ public class UniqueLoops implements IndirectHintProducer {
                     if (degree * 2 < nbEmptyCells) {
                         // Look for hidden sets
                         int[] remValues = new int[7 - extra.cardinality()];
-                        for (int value = 1, dstIndex = 0; value <= 9; value++) {
+                        for (int value = 1, dstIndex = 0; value <= 6; value++) {
                             if (value != v1 && value != v2 && !extra.get(value))
                                 remValues[dstIndex++] = value;
                         }
@@ -383,7 +383,7 @@ public class UniqueLoops implements IndirectHintProducer {
         // Build other value list
         int[] oValues = new int[otherValues.cardinality()];
         int dstIndex = 0;
-        for (int value = 1; value <= 9; value++) {
+        for (int value = 1; value <= 6; value++) {
             if (otherValues.get(value))
                 oValues[dstIndex++] = value;
         }
@@ -392,12 +392,12 @@ public class UniqueLoops implements IndirectHintProducer {
         potentialIndexes.clear(index1);
         potentialIndexes.clear(index2);
         Map<Cell, BitSet> removable = new HashMap<Cell, BitSet>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             if (potentialIndexes.get(i)) {
                 Cell cell = region.getCell(i);
                 if (!cell.equals(c1) && !cell.equals(c2)) {
                     BitSet values = new BitSet(10);
-                    for (int value = 1; value <= 9; value++) {
+                    for (int value = 1; value <= 6; value++) {
                         if (!hiddenValues.get(value) && cell.hasPotentialValue(value)) {
                             values.set(value);
                         }
@@ -408,7 +408,7 @@ public class UniqueLoops implements IndirectHintProducer {
             }
         }
         int[] indexes = new int[potentialIndexes.cardinality()];
-        for (int i = 0, j = 0; i < 9; i++) {
+        for (int i = 0, j = 0; i < 6; i++) {
             if (potentialIndexes.get(i))
                 indexes[j++] = i;
         }
@@ -421,26 +421,26 @@ public class UniqueLoops implements IndirectHintProducer {
         // Build other value list
         int[] oValues = new int[otherValues.cardinality()];
         int dstIndex = 0;
-        for (int value = 1; value <= 9; value++) {
+        for (int value = 1; value <= 6; value++) {
             if (otherValues.get(value))
                 oValues[dstIndex++] = value;
         }
         // Build naked set value list
         int[] nValues = new int[commonPotentialValues.cardinality()];
         dstIndex = 0;
-        for (int value = 1; value <= 9; value++) {
+        for (int value = 1; value <= 6; value++) {
             if (commonPotentialValues.get(value))
                 nValues[dstIndex++] = value;
         }
         // Build removable potentials
         Map<Cell,BitSet> removable = new HashMap<Cell,BitSet>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             Cell otherCell = region.getCell(i);
             if (!Arrays.asList(cells).contains(otherCell)
                     && !c1.equals(otherCell) && !c2.equals(otherCell)) {
                 // Get removable potentials
                 BitSet removablePotentials = new BitSet(10);
-                for (int value = 1; value <= 9; value++) {
+                for (int value = 1; value <= 6; value++) {
                     if (commonPotentialValues.get(value) && otherCell.hasPotentialValue(value))
                         removablePotentials.set(value);
                 }
@@ -463,7 +463,7 @@ public class UniqueLoops implements IndirectHintProducer {
                 // Region common to c1 and c2
                 boolean hasValue1 = false;
                 boolean hasValue2 = false;
-                for (int i = 0; i < 9; i++) {
+                for (int i = 0; i < 6; i++) {
                     Cell cell = region.getCell(i);
                     if (!cell.equals(c1) && !cell.equals(c2)) {
                         if (cell.hasPotentialValue(v1))

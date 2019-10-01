@@ -124,19 +124,19 @@ public class Chaining implements IndirectHintProducer {
             boolean isXChainEnabled) {
         List<ChainingHint> result = new ArrayList<ChainingHint>();
         // Iterate on all empty cells
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);
                 int cardinality = cell.getPotentialValues().cardinality();
                 if (cell.getValue() == 0) { // the cell is empty
                     if (cardinality > 1) {
                         // Iterate on all potential values that are not alone
-                        for (int value = 1; value <= 9; value++) {
+                        for (int value = 1; value <= 6; value++) {
                             if (cell.hasPotentialValue(value)) {
                                 Potential pOn = new Potential(cell, value, true);
                                 doUnaryChaining(grid, pOn, result, isYChainEnabled, isXChainEnabled);
                             }
-                        } 
+                        }
                     }
                 } // if empty
             } // for x
@@ -154,8 +154,8 @@ public class Chaining implements IndirectHintProducer {
     private List<ChainingHint> getMultipleChainsHintList(Grid grid) {
         List<ChainingHint> result = new ArrayList<ChainingHint>();
         // Iterate on all empty cells
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);
                 int cardinality = cell.getPotentialValues().cardinality();
                 if (cell.getValue() == 0) { // the cell is empty
@@ -169,7 +169,7 @@ public class Chaining implements IndirectHintProducer {
                         LinkedSet<Potential> cellToOff = null;
 
                         // Iterate on all potential values that are not alone
-                        for (int value = 1; value <= 9; value++) {
+                        for (int value = 1; value <= 6; value++) {
                             if (cell.hasPotentialValue(value)) {
                                 // Do Binary chaining (same potential either on or off)
                                 Potential pOn = new Potential(cell, value, true);
@@ -478,7 +478,7 @@ public class Chaining implements IndirectHintProducer {
         if (isYChainEnabled) { // This rule is not used with X-Chains
             // First rule: other potential values for this cell get off
             BitSet potentialValues = p.cell.getPotentialValues();
-            for (int value = 1; value <= 9; value++) {
+            for (int value = 1; value <= 6; value++) {
                 if (value != p.value && potentialValues.get(value))
                     result.add(new Potential(p.cell, value, false, p,
                             Potential.Cause.NakedSingle, "the cell can contain only one value"));
@@ -488,7 +488,7 @@ public class Chaining implements IndirectHintProducer {
         // Second rule: other potential position for this value get off
         for (Class<? extends Grid.Region> regionType : grid.getRegionTypes()) {
             Grid.Region region = grid.getRegionAt(regionType, p.cell.getX(), p.cell.getY());
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < 6; i++) {
                 Cell cell = region.getCell(i);
                 if (!cell.equals(p.cell) && cell.hasPotentialValue(p.value))
                     result.add(new Potential(cell, p.value, false, p,
@@ -505,7 +505,7 @@ public class Chaining implements IndirectHintProducer {
         int y = p.cell.getY();
         Cell curCell = grid.getCell(x, y);
         Cell srcCell = source.getCell(x, y);
-        for (int value = 1; value <= 9; value++) {
+        for (int value = 1; value <= 6; value++) {
             if (srcCell.hasPotentialValue(value) && !curCell.hasPotentialValue(value)) {
                 // Add a hidden parent
                 Potential parent = new Potential(curCell, value, false);
@@ -898,7 +898,7 @@ public class Chaining implements IndirectHintProducer {
             removable.put(target.cell, SingletonBitSet.create(target.value));
         else {
             BitSet values = new BitSet(10);
-            for (int value = 1; value <= 9; value++) {
+            for (int value = 1; value <= 6; value++) {
                 if (value != target.value && target.cell.hasPotentialValue(value))
                     values.set(value);
             }
@@ -949,7 +949,7 @@ public class Chaining implements IndirectHintProducer {
 
         // Build chains
         LinkedHashMap<Integer, Potential> chains = new LinkedHashMap<Integer, Potential>();
-        for (int value = 1; value <= 9; value++) {
+        for (int value = 1; value <= 6; value++) {
             if (srcCell.hasPotentialValue(value)) {
                 // Get corresponding value with the matching parents
                 Potential valueTarget = outcomes.get(value).get(target);
@@ -977,7 +977,7 @@ public class Chaining implements IndirectHintProducer {
         // Build chains
         LinkedHashMap<Integer, Potential> chains = new LinkedHashMap<Integer, Potential>();
         BitSet potentialPositions = region.getPotentialPositions(value);
-        for (int pos = 0; pos < 9; pos++) {
+        for (int pos = 0; pos < 6; pos++) {
             if (potentialPositions.get(pos)) {
                 // Get corresponding value with the matching parents
                 Potential posTarget = outcomes.get(pos).get(target);
@@ -990,7 +990,7 @@ public class Chaining implements IndirectHintProducer {
 
     public String getCommonName(ChainingHint hint) {
         if (!isDynamic && !isMultipleEnabled) {
-            if (hint.isXChain) 
+            if (hint.isXChain)
                 return "X-Chain";
             else
                 return "Y-Chain";

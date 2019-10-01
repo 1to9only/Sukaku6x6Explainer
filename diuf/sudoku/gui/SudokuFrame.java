@@ -86,7 +86,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JMenuItem mitSolve = null;
     private JMenuItem mitResetPotentials = null;
     private JMenuItem mitClearHints = null;
-    private File defaultDirectory = null;
+    private File defaultDirectory = new File("").getAbsoluteFile();
     private JRadioButton rdbView1 = null;
     private JRadioButton rdbView2 = null;
     private JMenu optionsMenu = null;
@@ -310,7 +310,7 @@ public class SudokuFrame extends JFrame implements Asker {
     }
 
     private void initialize() {
-        this.setTitle("Sudoku Explainer " + VERSION + "." + REVISION + SUBREV);
+        this.setTitle("Sudoku 6(2Rx3C) Explainer " + VERSION + "." + REVISION + SUBREV);
         JMenuBar menuBar = getJJMenuBar();
         setupLookAndFeelMenu();
         this.setJMenuBar(menuBar);
@@ -939,7 +939,7 @@ public class SudokuFrame extends JFrame implements Asker {
             setCommand(getMitPaste(), 'V');
             editMenu.addSeparator();
             editMenu.add(getMitClear());
-            setCommand(getMitClear(), 'E'); 
+            setCommand(getMitClear(), 'E');
         }
         return editMenu;
     }
@@ -1060,7 +1060,7 @@ public class SudokuFrame extends JFrame implements Asker {
                     try {
                         engine.analyse();
                     } catch (UnsupportedOperationException ex) {
-                        JOptionPane.showMessageDialog(SudokuFrame.this, 
+                        JOptionPane.showMessageDialog(SudokuFrame.this,
                                 "The Sudoku Explainer failed to solve this Sudoku\n" +
                                 "using the solving techniques that are currently enabled.",
                                 "Analysis", JOptionPane.ERROR_MESSAGE);
@@ -1218,7 +1218,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JRadioButtonMenuItem getMitMathMode() {
         if (mitMathMode == null) {
             mitMathMode = new JRadioButtonMenuItem();
-            mitMathMode.setText("R1C1 - R9C9 cell notation");
+            mitMathMode.setText("R1C1 - R6C6 cell notation");
             mitMathMode.setMnemonic(KeyEvent.VK_R);
             mitMathMode.setSelected(Settings.getInstance().isRCNotation());
             mitMathMode.addItemListener(new java.awt.event.ItemListener() {
@@ -1236,7 +1236,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JRadioButtonMenuItem getMitChessMode() {
         if (mitChessMode == null) {
             mitChessMode = new JRadioButtonMenuItem();
-            mitChessMode.setText("A1 - I9 cell notation");
+            mitChessMode.setText("A1 - F6 cell notation");
             mitChessMode.setMnemonic(KeyEvent.VK_A);
             mitChessMode.setSelected(!Settings.getInstance().isRCNotation());
             mitChessMode.addItemListener(new java.awt.event.ItemListener() {

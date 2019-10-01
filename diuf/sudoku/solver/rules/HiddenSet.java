@@ -49,7 +49,7 @@ public class HiddenSet implements IndirectHintProducer {
         for (Grid.Region region : regions) {
             int nbEmptyCells = region.getEmptyCellCount();
             if (nbEmptyCells > degree * 2 || (isDirect && nbEmptyCells > degree)) {
-                Permutations perm = new Permutations(degree, 9);
+                Permutations perm = new Permutations(degree, 6);
                 // Iterate on tuple of values
                 while (perm.hasNext()) {
                     int[] values = perm.nextBitNums();
@@ -57,7 +57,7 @@ public class HiddenSet implements IndirectHintProducer {
 
                     // Build the value tuple
                     for (int i = 0; i < values.length; i++)
-                        values[i] += 1; // 0..8 -> 1..9
+                        values[i] += 1; // 0..5 -> 1..6
 
                     // Build potential positions for each value of the tuple
                     BitSet[] potentialIndexes = new BitSet[degree];
@@ -90,13 +90,13 @@ public class HiddenSet implements IndirectHintProducer {
         // Look for concerned potentials and removable potentials
         Map<Cell,BitSet> cellPValues = new LinkedHashMap<Cell,BitSet>();
         Map<Cell,BitSet> cellRemovePValues = new HashMap<Cell,BitSet>();
-        for (int index = 0; index < 9; index++) {
+        for (int index = 0; index < 6; index++) {
             Cell cell = region.getCell(index);
             if (commonPotentialPositions.get(index)) {
                 cellPValues.put(cell, valueSet);
                 // Look for the potential values we can remove
                 BitSet removablePotentials = new BitSet(10);
-                for (int value = 1; value <= 9; value++) {
+                for (int value = 1; value <= 6; value++) {
                     if (!valueSet.get(value) && cell.hasPotentialValue(value))
                         removablePotentials.set(value);
                 }
@@ -107,7 +107,7 @@ public class HiddenSet implements IndirectHintProducer {
         }
         if (isDirect) {
             // Look for Hidden Single
-            for (int value = 1; value <= 9; value++) {
+            for (int value = 1; value <= 6; value++) {
                 if (!valueSet.get(value)) {
                     BitSet positions = region.copyPotentialPositions(value);
                     if (positions.cardinality() > 1) {

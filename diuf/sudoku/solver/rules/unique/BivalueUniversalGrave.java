@@ -30,7 +30,7 @@ public class BivalueUniversalGrave implements IndirectHintProducer {
             Grid.Region[] regions = grid.getRegions(regionType);
             for (int i = 0; i < regions.length; i++) {
                 Grid.Region region = regions[i];
-                for (int value = 1; value <= 9; value++) {
+                for (int value = 1; value <= 6; value++) {
                     // Possible positions of a value in a region (row/column/block):
                     BitSet positions = region.getPotentialPositions(value);
                     int cardinality = positions.cardinality();
@@ -81,8 +81,8 @@ public class BivalueUniversalGrave implements IndirectHintProducer {
 
         // When bug values have been removed, all remaining empty cells must have
         // exactly two potential values. Check it
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
                 Cell cell = temp.getCell(x, y);
                 if (cell.getValue() == 0 && cell.getPotentialValues().cardinality() != 2)
                     return; // Not a BUG
@@ -94,7 +94,7 @@ public class BivalueUniversalGrave implements IndirectHintProducer {
             Grid.Region[] regions = temp.getRegions(regionType);
             for (int i = 0; i < regions.length; i++) {
                 Grid.Region region = regions[i];
-                for (int value = 1; value <= 9; value++) {
+                for (int value = 1; value <= 6; value++) {
                     // Possible positions of a value in a region (row/column/block):
                     BitSet positions = region.getPotentialPositions(value);
                     int cardinality = positions.cardinality();
@@ -103,7 +103,7 @@ public class BivalueUniversalGrave implements IndirectHintProducer {
                 }
             }
         }
-        
+
         if (bugCells.size() == 1) {
             // Yeah, potential BUG type-1 pattern found
             addBug1Hint(accu, bugCells, allBugValues);
