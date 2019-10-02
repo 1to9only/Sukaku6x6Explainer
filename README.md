@@ -8,15 +8,15 @@ This version of Sudoku6x6Explainer was first released here: http://forum.enjoysu
 
 ## Usage - GUI
 
-  java.exe -jar Sudoku6x6Explainer.jar
+  java.exe -jar Sudoku6Explainer.jar
 
 ## Usage - serate
 
- java.exe -Xrs -Xmx500m -cp Sudoku6x6Explainer.jar diuf.sudoku.test.serate --format="%g ED=%r/%p/%d" --input=puzzles.txt --output=puzzles.rated.txt
+ java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.serate --format="%g ED=%r/%p/%d" --input=puzzles.txt --output=puzzles.rated.txt
 
 ## Usage - hints
 
-  java.exe -Xrs -Xmx500m -cp Sudoku6x6Explainer.jar diuf.sudoku.test.hints --input=puzzle.txt
+  java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.hints --input=puzzle.txt
 
 # Sukaku6x6Explainer
 

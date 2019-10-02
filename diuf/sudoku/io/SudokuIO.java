@@ -243,6 +243,24 @@ public class SudokuIO {
         }
     }
 
+    private static void saveSukakuToWriter(Grid grid, Writer writer) throws IOException {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                Cell cell = grid.getCell(x, y);
+                int n = cell.getValue();
+                for (int pv=1; pv<=6; pv++ ) {
+                    if ( pv == n || cell.hasPotentialValue( pv) ) {
+                        writer.write('0'+pv);
+                    }
+                    else {
+                        writer.write('.');
+                    }
+                }
+            }
+        }
+        writer.write("\r\n");
+    }
+
     /**
      * Test whether a Sudoku can be loaded from the current
      * content of the clipboard.
@@ -267,9 +285,9 @@ public class SudokuIO {
             if (result == RES_OK) // success
                 return null;
             if (result == RES_WARN) // warning
-                return new ErrorMessage(WARNING_MSG, false);
+                return new ErrorMessage(WARNING_MSG, false, (Object[])(new String[0]));
             else // error
-                return new ErrorMessage(ERROR_MSG, true);
+                return new ErrorMessage(ERROR_MSG, true, (Object[])(new String[0]));
         } catch (IOException ex) {
             return new ErrorMessage("Error while copying:\n{0}", ex);
         } catch (UnsupportedFlavorException ex) {
@@ -293,6 +311,17 @@ public class SudokuIO {
         }
     }
 
+    public static void saveSukakuToClipboard(Grid grid) {
+        StringWriter writer = new StringWriter();
+        try {
+            saveSukakuToWriter(grid, writer);
+            StringSelection data = new StringSelection(writer.toString());
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(data, data);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static ErrorMessage loadFromFile(Grid grid, File file) {
         Reader reader = null;
         try {
@@ -302,9 +331,9 @@ public class SudokuIO {
             if (result == RES_OK)
                 return null;
             else if (result == RES_WARN)
-                return new ErrorMessage(WARNING_MSG, false);
+                return new ErrorMessage(WARNING_MSG, false, (Object[])(new String[0]));
             else
-                return new ErrorMessage(ERROR_MSG, true);
+                return new ErrorMessage(ERROR_MSG, true, (Object[])(new String[0]));
         } catch (FileNotFoundException ex) {
             return new ErrorMessage("File not found: {0}", file);
         } catch (IOException ex) {
@@ -326,6 +355,26 @@ public class SudokuIO {
             FileWriter fwriter = new FileWriter(file);
             writer = new BufferedWriter(fwriter);
             saveToWriter(grid, writer);
+            return null;
+        } catch (IOException ex) {
+            return new ErrorMessage("Error while writing file {0}:\n{1}", file, ex);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static ErrorMessage saveSukakuToFile(Grid grid, File file) {
+        Writer writer = null;
+        try {
+            FileWriter fwriter = new FileWriter(file);
+            writer = new BufferedWriter(fwriter);
+            saveSukakuToWriter(grid, writer);
             return null;
         } catch (IOException ex) {
             return new ErrorMessage("Error while writing file {0}:\n{1}", file, ex);

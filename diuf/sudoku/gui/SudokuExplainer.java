@@ -478,6 +478,10 @@ public class SudokuExplainer {
         SudokuIO.saveToClipboard(grid);
     }
 
+    public void copySukaku() {
+        SudokuIO.saveSukakuToClipboard(grid);
+    }
+
     public void loadGrid(File file) {
         Grid copy = new Grid();
         this.grid.copyTo(copy);
@@ -499,6 +503,13 @@ public class SudokuExplainer {
 
     public void saveGrid(File file) {
         ErrorMessage message = SudokuIO.saveToFile(grid, file);
+        if (message != null)
+            JOptionPane.showMessageDialog(frame, message.toString(), "Paste",
+                    JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void saveSukaku(File file) {
+        ErrorMessage message = SudokuIO.saveSukakuToFile(grid, file);
         if (message != null)
             JOptionPane.showMessageDialog(frame, message.toString(), "Paste",
                     JOptionPane.ERROR_MESSAGE);
