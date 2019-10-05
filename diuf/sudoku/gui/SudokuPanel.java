@@ -105,9 +105,12 @@ public class SudokuPanel extends JPanel {
                         }
                     } else {
                         if (target.getValue() == 0) {
-                            // Set the cell's value
-                            engine.cellValueTyped(target, value);
-                            repaint();
+                            if ( target.hasPotentialValue( value) )
+                            {
+                                // Set the cell's value
+                                engine.cellValueTyped(target, value);
+                                repaint();
+                            }
                         } else {
                             // Clear the cell's value
                             engine.cellValueTyped(target, 0);
