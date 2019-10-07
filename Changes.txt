@@ -1,5 +1,15 @@
 Changes:
 
+20191007:
+- added Candidate Masks, based on code from https://github.com/blindlf/SudokuExplainer
+- Chaining.java changes from http://forum.enjoysudoku.com/post280341.html
+- commented out all assert statements
+
+20191005:
+- updated Reader code to handle most grid formats: grid is 1-6 for given or pencilmark, . or 0 for empty cell
+- added Undo, based on code from https://github.com/Itsukara/SudokuExplainerPlus
+- fixed mouse click issue in unsolved cell to select potential candidate
+
 20191002:
 - added Copy/Save Sudoku/Sukaku menu options in GUI
 - minor (cosmetic) changes
