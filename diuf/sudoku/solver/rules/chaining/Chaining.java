@@ -480,8 +480,12 @@ public class Chaining implements IndirectHintProducer {
         if (isYChainEnabled) { // This rule is not used with X-Chains
             // First rule: other potential values for this cell get off
             BitSet potentialValues = p.cell.getPotentialValues();
-            for (int value = 1; value <= 6; value++) {
-                if (value != p.value && potentialValues.get(value))
+            for (int
+                 value = potentialValues.nextSetBit(0);
+                 value > 0;
+                 value = potentialValues.nextSetBit(value+1)
+                 ) {
+                if (value != p.value                              )
                     result.add(new Potential(p.cell, value, false, p,
                             Potential.Cause.NakedSingle, "the cell can contain only one value"));
             }
