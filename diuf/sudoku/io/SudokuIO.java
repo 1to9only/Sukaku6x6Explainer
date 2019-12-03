@@ -101,6 +101,7 @@ public class SudokuIO {
                 grid.setCellValue(i % 6, i / 6, 0);
                 Cell cell = grid.getCell(i % 6, i / 6);
                 cell.clearPotentialValues();
+                cell.resetGiven();
             }
             while ( cellnum < 36 && cluenum < linelen ) {
                 prevchispad = chispad;
