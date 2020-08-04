@@ -347,7 +347,7 @@ public class Solver {
         return result;
     }
 
-    private boolean isSolved() {
+    public boolean isSolved() {
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                 if (grid.getCellValue(x, y) == 0)
