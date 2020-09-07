@@ -462,7 +462,7 @@ public class Solver {
                 double ruleDiff = rule.getDifficulty();
                 if (ruleDiff > difficulty)
                     difficulty = ruleDiff;
-                if (difficulty >= min && max >= 11.0)
+                if (difficulty >= min && max >  11.0)
                     break;
                 if (difficulty > max)
                     break;
