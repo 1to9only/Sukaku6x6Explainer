@@ -190,6 +190,19 @@ public class SudokuIO {
         }
     }
 
+    private static void saveToWriter36(Grid grid, Writer writer) throws IOException {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                int value = grid.getCellValue(x, y);
+                int ch = '.';
+                if (value > 0)
+                    ch = '0' + value;
+                writer.write(ch);
+            }
+        }
+        writer.write("\r\n");
+    }
+
     private static void saveSukakuToWriter(Grid grid, Writer writer) throws IOException {
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
@@ -206,6 +219,68 @@ public class SudokuIO {
             }
         }
         writer.write("\r\n");
+    }
+
+    private static void savePencilMarksToWriter(Grid grid, Writer writer) throws IOException {
+        int crd = 1;
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                int n = grid.getCell(x, y).getPotentialValues().cardinality();
+                if ( n > crd ) { crd = n; }
+            }
+        }
+
+        String s = "";
+        for (int i=0; i<3; i++ ) {
+            s = "+";
+            for (int j=0; j<2; j++ ) {
+                for (int k=0; k<3; k++ ) { s += "-";
+                    for (int l=0; l<crd; l++ ) { s += "-";
+                    }
+                }
+                s += "-+";
+            }
+            writer.write(s + "\r\n");
+
+            for (int j=0; j<2; j++ ) {
+                s = "|";
+                for (int k=0; k<2; k++ ) {
+                    for (int l=0; l<3; l++ ) {
+                        s += " ";
+                        int cnt = 0;
+                        int c = (((i*2)+j)*6)+k*3+l;
+                        Cell cell = grid.getCell(c % 6, c / 6);
+                        int n = cell.getValue();
+                        if ( n != 0 ) {
+                            s += n;
+                            cnt += 1;
+                        }
+                        if ( n == 0 ) {
+                            for (int pv=1; pv<=6; pv++ ) {
+                                if ( cell.hasPotentialValue( pv) ) {
+                                    s += pv;
+                                    cnt += 1;
+                                }
+                            }
+                        }
+                        for (int pad=cnt; pad<crd; pad++ ) { s += " ";
+                        }
+                    }
+                    s += " |";
+                }
+                writer.write(s + "\r\n");
+            }
+        }
+
+        s = "+";
+        for (int j=0; j<2; j++ ) {
+            for (int k=0; k<3; k++ ) { s += "-";
+                for (int l=0; l<crd; l++ ) { s += "-";
+                }
+            }
+            s += "-+";
+        }
+        writer.write(s + "\r\n");
     }
 
     /**
@@ -258,10 +333,32 @@ public class SudokuIO {
         }
     }
 
+    public static void saveToClipboard36(Grid grid) {
+        StringWriter writer = new StringWriter();
+        try {
+            saveToWriter36(grid, writer);
+            StringSelection data = new StringSelection(writer.toString());
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(data, data);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void saveSukakuToClipboard(Grid grid) {
         StringWriter writer = new StringWriter();
         try {
             saveSukakuToWriter(grid, writer);
+            StringSelection data = new StringSelection(writer.toString());
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(data, data);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void savePencilMarksToClipboard(Grid grid) {
+        StringWriter writer = new StringWriter();
+        try {
+            savePencilMarksToWriter(grid, writer);
             StringSelection data = new StringSelection(writer.toString());
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(data, data);
         } catch (IOException ex) {
@@ -316,12 +413,52 @@ public class SudokuIO {
         }
     }
 
+    public static ErrorMessage saveToFile36(Grid grid, File file) {
+        Writer writer = null;
+        try {
+            FileWriter fwriter = new FileWriter(file);
+            writer = new BufferedWriter(fwriter);
+            saveToWriter36(grid, writer);
+            return null;
+        } catch (IOException ex) {
+            return new ErrorMessage("Error while writing file {0}:\n{1}", file, ex);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
     public static ErrorMessage saveSukakuToFile(Grid grid, File file) {
         Writer writer = null;
         try {
             FileWriter fwriter = new FileWriter(file);
             writer = new BufferedWriter(fwriter);
             saveSukakuToWriter(grid, writer);
+            return null;
+        } catch (IOException ex) {
+            return new ErrorMessage("Error while writing file {0}:\n{1}", file, ex);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static ErrorMessage savePencilMarksToFile(Grid grid, File file) {
+        Writer writer = null;
+        try {
+            FileWriter fwriter = new FileWriter(file);
+            writer = new BufferedWriter(fwriter);
+            savePencilMarksToWriter(grid, writer);
             return null;
         } catch (IOException ex) {
             return new ErrorMessage("Error while writing file {0}:\n{1}", file, ex);

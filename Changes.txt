@@ -1,10 +1,13 @@
 Changes:
 
+20201102:
+- added variants (LS/X), and other improvements
+- settings saved to a json file
+
 20191118:
 - changed to PLAIN font for GUI grid, black given cells, blue solved cells
 
 20191029:
-
 - slightly improved Grid
 
 20191024:
@@ -12,7 +15,6 @@ Changes:
 
 20191022:
 - slightly improved SolvingTechnique, NakedSingle, Chaining
-
 
 20191018:
 - made Full Symmetry only initial option in GenerateDialog

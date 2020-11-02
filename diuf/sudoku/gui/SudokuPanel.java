@@ -10,6 +10,11 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.util.*;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
 import javax.swing.*;
 
 import diuf.sudoku.*;
@@ -26,15 +31,15 @@ public class SudokuPanel extends JPanel {
 
     private static final long serialVersionUID = 3709127163156966626L;
 
-    private int CELL_OUTER_SIZE = 45;
-    private int CELL_INNER_SIZE = 39;
+    private int CELL_OUTER_SIZE = 45+21;
+    private int CELL_INNER_SIZE = 39+21;
     private int GRID_GAP_SIZE = 2;
     private int LEGEND_GAP_SIZE = 42;
     private int CELL_PAD = (CELL_OUTER_SIZE - CELL_INNER_SIZE) / 2;
     private int GRID_SIZE = CELL_OUTER_SIZE * 6;
     private String FONT_NAME = "Verdana";
-    private int FONT_SIZE_SMALL = 12;
-    private int FONT_SIZE_BIG = 36;
+    private int FONT_SIZE_SMALL = 12+6;
+    private int FONT_SIZE_BIG = 36+12;
     private int FONT_SIZE_LEGEND = 24;
 
     private Grid grid;
@@ -56,8 +61,12 @@ public class SudokuPanel extends JPanel {
     private Font bigFont;
     private Font legendFont;
 
-    private Color candidateMaskColor = new Color(0, 255, 255, 127);
-    private Color potentialMaskColor = new Color(0, 255, 0, 127);
+    // 1to9only:     the colors used to be defined here.
+
+    private Color backgroundColor = new Color(248, 248, 248, 127);      // background
+
+    private Color candidateMaskColor = new Color(0, 255, 255, 127);     // candidate mask
+    private Color potentialMaskColor = new Color(0, 255, 0, 127);       // potential mask
 
     public SudokuPanel(SudokuFrame parent) {
         super();
@@ -427,8 +436,49 @@ public class SudokuPanel extends JPanel {
         return isHighlighted;
     }
 
+    private boolean init2PotentialColor(Graphics g, Cell cell, int value) {
+        boolean isHighlighted = false;
+        boolean isRed = false;
+        Color col = Color.gray;
+        if (bluePotentials != null) {
+            BitSet blueValues = bluePotentials.get(cell);
+            if (blueValues != null && blueValues.get(value)) {
+                col = Color.blue;
+                isHighlighted = true;
+            }
+        }
+        if (redPotentials != null) {
+            BitSet redValues = redPotentials.get(cell);
+            if (redValues != null && redValues.get(value)) {
+                col = Color.red;
+                isHighlighted = true;
+                isRed = true;
+            }
+        }
+        if (greenPotentials != null) {
+            BitSet greenValues = greenPotentials.get(cell);
+            if (greenValues != null && greenValues.get(value)) {
+                if (isRed) {
+                    col = new Color(224, 128, 0);
+                } else {
+                    col = new Color(0, 224, 0);
+                    isHighlighted = true;
+                }
+            }
+        }
+    //  if (cell == selectedCell)
+    //      col = new Color(
+    //              (col.getRed() + Color.orange.getRed()) / 2,
+    //              (col.getGreen() + Color.orange.getGreen()) / 2,
+    //              (col.getBlue() + Color.orange.getBlue()) / 2);
+    //  if (cell == selectedCell && value == focusedCandidate)
+    //      col = Color.black;
+        g.setColor(col);
+        return isHighlighted;
+    }
+
     private void initFillColor(Graphics g, Cell cell) {
-        Color col = Color.white;
+        Color col = backgroundColor;
         if (redCells != null && redCells.contains(cell))
             col = Color.red;
         else if (greenCells != null && greenCells.contains(cell))
@@ -437,6 +487,38 @@ public class SudokuPanel extends JPanel {
             col = Color.orange;
         else if (cell == focusedCell)
             col = Color.yellow;
+        else {
+            boolean showing = Settings.getInstance().isShowingCandidateMasks();
+            if ( showing == true ) {
+                // Selected candidates color
+                int value = -1;
+                if (null != selectedCell) {
+                    value = selectedCell.getValue();
+                }
+                if ( value > 0 ) {
+                    if ( value == cell.getValue()) {
+                        col = candidateMaskColor;
+                    }
+                    else
+                    if ( cell.hasPotentialValue(value)) {
+                        col = potentialMaskColor;
+                    }
+                }
+            }
+        }
+        g.setColor(col);
+    }
+
+    private void init2FillColor(Graphics g, Cell cell) {
+        Color col = backgroundColor;
+        if (redCells != null && redCells.contains(cell))
+            col = Color.red;
+        else if (greenCells != null && greenCells.contains(cell))
+            col = new Color(192, 255, 255);
+    //  else if (cell == selectedCell)
+    //      col = Color.orange;
+    //  else if (cell == focusedCell)
+    //      col = Color.yellow;
         else {
             boolean showing = Settings.getInstance().isShowingCandidateMasks();
             if ( showing == true ) {
@@ -487,6 +569,26 @@ public class SudokuPanel extends JPanel {
         paintCellsPotentials(g);
         paintCursor();
         g2.setTransform(oldTransform);
+    }
+
+    public void saveAsImage(File file) {
+      try {
+        BufferedImage bi = new BufferedImage(GRID_SIZE+4, GRID_SIZE+4, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bi.createGraphics();
+        Graphics2D g2 = (Graphics2D)g;
+        initGraphics(g2);
+        g.setColor(backgroundColor);
+        g.fillRect(0, 0, GRID_SIZE+4, GRID_SIZE+4);
+        paint2SelectionAndFocus(g, 2);
+        paint2Grid(g, 2);
+        paint2HighlightedRegions(g, 2);
+        paint2CellsValues(g, 2);
+        paint2Links(g, 2);
+        paint2CellsPotentials(g, 2);
+        ImageIO.write(bi, "PNG", file);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
 
     /**
@@ -563,10 +665,20 @@ public class SudokuPanel extends JPanel {
         }
     }
 
+    private void paint2SelectionAndFocus(Graphics g, int adj) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                    Cell cell = grid.getCell(x, y);
+                    init2FillColor(g, cell);
+                    g.fillRect(x * CELL_OUTER_SIZE+adj, y * CELL_OUTER_SIZE+adj, CELL_OUTER_SIZE, CELL_OUTER_SIZE);
+            }
+        }
+    }
+
     private void paintGrid(Graphics g) {
         for (int i = 0; i <= 6; i++) {
             int lineWidth;
-            if (i % 3 == 0) {
+            if (i % 6 == 0 || (i % 3 == 0  && !grid.isLatinSquare())) {
                 lineWidth = 4;
                 g.setColor(Color.black);
             } else {
@@ -576,7 +688,7 @@ public class SudokuPanel extends JPanel {
             int offset = lineWidth / 2;
             // vertical lines
             g.fillRect(i * CELL_OUTER_SIZE - offset, 0 - offset, lineWidth, GRID_SIZE + lineWidth);
-            if (i % 2 == 0) {
+            if (i % 6 == 0 || (i % 2 == 0  && !grid.isLatinSquare())) {
                 lineWidth = 4;
                 g.setColor(Color.black);
             } else {
@@ -587,6 +699,42 @@ public class SudokuPanel extends JPanel {
             // horizontal lines
             g.fillRect(0 - offset, i * CELL_OUTER_SIZE - offset, GRID_SIZE + lineWidth, lineWidth);
         }
+        if (grid.isDiagonals()) {
+            g.setColor(Color.black);
+            g.drawLine( CELL_OUTER_SIZE / 6, CELL_OUTER_SIZE / 6, 6 * CELL_OUTER_SIZE - CELL_OUTER_SIZE / 6, 6 * CELL_OUTER_SIZE - CELL_OUTER_SIZE / 6);
+            g.drawLine( CELL_OUTER_SIZE / 6, 6 * CELL_OUTER_SIZE - CELL_OUTER_SIZE / 6, 6 * CELL_OUTER_SIZE - CELL_OUTER_SIZE / 6, CELL_OUTER_SIZE / 6);
+        }
+    }
+
+    private void paint2Grid(Graphics g, int adj) {
+        for (int i = 0; i <= 6; i++) {
+            int lineWidth;
+            if (i % 6 == 0 || (i % 3 == 0  && !grid.isLatinSquare())) {
+                lineWidth = 4;
+                g.setColor(Color.black);
+            } else {
+                lineWidth = 2;
+                g.setColor(Color.blue.darker());
+            }
+            int offset = lineWidth / 2;
+            // vertical lines
+            g.fillRect(i * CELL_OUTER_SIZE - offset+adj, 0 - offset+adj, lineWidth, GRID_SIZE + lineWidth);
+            if (i % 6 == 0 || (i % 2 == 0  && !grid.isLatinSquare())) {
+                lineWidth = 4;
+                g.setColor(Color.black);
+            } else {
+                lineWidth = 2;
+                g.setColor(Color.blue.darker());
+            }
+            offset = lineWidth / 2;
+            // horizontal lines
+            g.fillRect(0 - offset+adj, i * CELL_OUTER_SIZE - offset+adj, GRID_SIZE + lineWidth, lineWidth);
+        }
+        if (grid.isDiagonals()) {
+            g.setColor(Color.black);
+            g.drawLine( CELL_OUTER_SIZE / 6+adj, CELL_OUTER_SIZE / 6+adj, 6 * CELL_OUTER_SIZE - CELL_OUTER_SIZE / 6+adj, 6 * CELL_OUTER_SIZE - CELL_OUTER_SIZE / 6+adj);
+            g.drawLine( CELL_OUTER_SIZE / 6+adj, 6 * CELL_OUTER_SIZE - CELL_OUTER_SIZE / 6+adj, 6 * CELL_OUTER_SIZE - CELL_OUTER_SIZE / 6+adj, CELL_OUTER_SIZE / 6+adj);
+        }
     }
 
     private void paintHighlightedRegions(Graphics g) {
@@ -596,37 +744,127 @@ public class SudokuPanel extends JPanel {
                 for (int i = 0; i < blueRegions.length; i++) {
                     int index = (rev == 0 ? i : blueRegions.length - 1 - i);
                     Grid.Region region = blueRegions[index];
+                    int x, y, w, h; // coordinates, width, height (in cells)
                     if (region != null) {
-                        int x, y, w, h; // coordinates, width, height (in cells)
-                        if (region instanceof Grid.Row) {
-                            Grid.Row row = (Grid.Row)region;
-                            y = row.getRowNum();
-                            h = 1;
-                            x = 0;
-                            w = 6;
-                        } else if (region instanceof Grid.Column) {
-                            Grid.Column column = (Grid.Column)region;
-                            x = column.getColumnNum();
-                            w = 1;
-                            y = 0;
-                            h = 6;
-                        } else {
-                            Grid.Block square = (Grid.Block)region;
-                            x = square.getHIndex() * 3;
-                            y = square.getVIndex() * 2;
-                            w = 3;
-                            h = 2;
+                        if (region instanceof Grid.Row || region instanceof Grid.Column || region instanceof Grid.Block) {
+                            if (region instanceof Grid.Row) {
+                                Grid.Row row = (Grid.Row)region;
+                                y = row.getRowNum();
+                                h = 1;
+                                x = 0;
+                                w = 6;
+                            } else if (region instanceof Grid.Column) {
+                                Grid.Column column = (Grid.Column)region;
+                                x = column.getColumnNum();
+                                w = 1;
+                                y = 0;
+                                h = 6;
+                            } else {
+                                Grid.Block square = (Grid.Block)region;
+                                x = square.getHIndex() * 3;
+                                y = square.getVIndex() * 2;
+                                w = 3;
+                                h = 2;
+                            }
+                            g.setColor(colors[index % 2]);
+                            for (int s = -2 + rev; s <= 2; s+= 2) {
+                                g.drawRect(x * CELL_OUTER_SIZE + s, y * CELL_OUTER_SIZE + s,
+                                        w * CELL_OUTER_SIZE - s * 2, h * CELL_OUTER_SIZE - s * 2);
+                            }
+                            if (rev == 0) {
+                                Color base = colors[index % 2];
+                                g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 12));
+                                g.fillRect(x * CELL_OUTER_SIZE + 3, y * CELL_OUTER_SIZE + 3,
+                                        w * CELL_OUTER_SIZE - 6, h * CELL_OUTER_SIZE - 6);
+                            }
                         }
-                        g.setColor(colors[index % 2]);
-                        for (int s = -2 + rev; s <= 2; s+= 2) {
-                            g.drawRect(x * CELL_OUTER_SIZE + s, y * CELL_OUTER_SIZE + s,
-                                    w * CELL_OUTER_SIZE - s * 2, h * CELL_OUTER_SIZE - s * 2);
+                        else {
+                            for (int j = 0; j < 6 ; j++) {
+                                Cell cell = region.getCell( j);
+                                x = cell.getX();
+                                y = cell.getY();
+                                w = 1;
+                                h = 1;
+                                g.setColor(colors[index % 2]);
+                                for (int s = -2 + rev; s <= 2; s+= 2) {
+                                    g.drawRect(x * CELL_OUTER_SIZE + s, y * CELL_OUTER_SIZE + s,
+                                            w * CELL_OUTER_SIZE - s * 2, h * CELL_OUTER_SIZE - s * 2);
+                                }
+                                if (rev == 0) {
+                                    Color base = colors[index % 2];
+                                    g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 12));
+                                    g.fillRect(x * CELL_OUTER_SIZE + 3, y * CELL_OUTER_SIZE + 3,
+                                            w * CELL_OUTER_SIZE - 6, h * CELL_OUTER_SIZE - 6);
+                                }
+                            }
                         }
-                        if (rev == 0) {
-                            Color base = colors[index % 2];
-                            g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 12));
-                            g.fillRect(x * CELL_OUTER_SIZE + 3, y * CELL_OUTER_SIZE + 3,
-                                    w * CELL_OUTER_SIZE - 6, h * CELL_OUTER_SIZE - 6);
+                        index++;
+                    }
+                }
+            }
+        }
+    }
+
+    private void paint2HighlightedRegions(Graphics g, int adj) {
+        if (blueRegions != null) {
+            Color[] colors = new Color[] {new Color(0, 0, 192), new Color(0, 128, 0)};
+            for (int rev = 0; rev < 2; rev++) {
+                for (int i = 0; i < blueRegions.length; i++) {
+                    int index = (rev == 0 ? i : blueRegions.length - 1 - i);
+                    Grid.Region region = blueRegions[index];
+                    int x, y, w, h; // coordinates, width, height (in cells)
+                    if (region != null) {
+                        if (region instanceof Grid.Row || region instanceof Grid.Column || region instanceof Grid.Block) {
+                            if (region instanceof Grid.Row) {
+                                Grid.Row row = (Grid.Row)region;
+                                y = row.getRowNum();
+                                h = 1;
+                                x = 0;
+                                w = 6;
+                            } else if (region instanceof Grid.Column) {
+                                Grid.Column column = (Grid.Column)region;
+                                x = column.getColumnNum();
+                                w = 1;
+                                y = 0;
+                                h = 6;
+                            } else {
+                                Grid.Block square = (Grid.Block)region;
+                                x = square.getHIndex() * 3;
+                                y = square.getVIndex() * 2;
+                                w = 3;
+                                h = 2;
+                            }
+                            g.setColor(colors[index % 2]);
+                            for (int s = -2 + rev; s <= 2; s+= 2) {
+                                g.drawRect(x * CELL_OUTER_SIZE + s+adj, y * CELL_OUTER_SIZE + s+adj,
+                                        w * CELL_OUTER_SIZE - s * 2, h * CELL_OUTER_SIZE - s * 2);
+                            }
+                            if (rev == 0) {
+                                Color base = colors[index % 2];
+                                g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 12));
+                                g.fillRect(x * CELL_OUTER_SIZE + 3+adj, y * CELL_OUTER_SIZE + 3+adj,
+                                        w * CELL_OUTER_SIZE - 6, h * CELL_OUTER_SIZE - 6);
+                            }
+                        }
+                        else {
+                            for (int j = 0; j < 6 ; j++) {
+                                Cell cell = region.getCell( j);
+                                x = cell.getX();
+                                y = cell.getY();
+                                w = 1;
+                                h = 1;
+                                g.setColor(colors[index % 2]);
+                                for (int s = -2 + rev; s <= 2; s+= 2) {
+                                    g.drawRect(x * CELL_OUTER_SIZE + s+adj, y * CELL_OUTER_SIZE + s+adj,
+                                            w * CELL_OUTER_SIZE - s * 2, h * CELL_OUTER_SIZE - s * 2);
+                                }
+                                if (rev == 0) {
+                                    Color base = colors[index % 2];
+                                    g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), 12));
+                                    g.fillRect(x * CELL_OUTER_SIZE + 3+adj, y * CELL_OUTER_SIZE + 3+adj,
+                                            w * CELL_OUTER_SIZE - 6, h * CELL_OUTER_SIZE - 6);
+                                }
+                            }
                         }
                         index++;
                     }
@@ -675,6 +913,30 @@ public class SudokuPanel extends JPanel {
         }
     }
 
+    private void paint2CellsPotentials(Graphics g, int adj) {
+      if (Settings.getInstance().isShowingCandidates()) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                    Cell cell = grid.getCell(x, y);
+                    // Paint potentials
+                    int index = 0;
+                    g.setFont(smallFont);
+                    for (int value = 1; value <= 6; value++) {
+                        if (cell.hasPotentialValue(value)) {
+                            int cx = x * CELL_OUTER_SIZE + CELL_PAD
+                            + (index % 3) * (CELL_INNER_SIZE / 3) + CELL_INNER_SIZE / 6;
+                            int cy = y * CELL_OUTER_SIZE + CELL_PAD
+                            + (index / 3) * (CELL_INNER_SIZE / 3) + CELL_INNER_SIZE / 6;
+                            init2PotentialColor(g, cell, value);
+                            drawStringCentered(g, "" + value, cx+adj, cy+adj);
+                        }
+                        index++;
+                    }
+            }
+        }
+      }
+    }
+
     private void paintCellsValues(Graphics g) {
         Rectangle clip = g.getClipBounds();
         Rectangle cellRect = new Rectangle();
@@ -692,6 +954,22 @@ public class SudokuPanel extends JPanel {
                         drawStringCentered(g, "" + cell.getValue(), cx, cy);
                     }
                 }
+            }
+        }
+    }
+
+    private void paint2CellsValues(Graphics g, int adj) {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                    Cell cell = grid.getCell(x, y);
+                    // Paint cell value
+                    if (cell.getValue() != 0) {
+                        g.setFont(bigFont);
+                        int cx = x * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;
+                        int cy = y * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;
+                        initValueColor(g, cell);
+                        drawStringCentered(g, "" + cell.getValue(), cx+adj, cy+adj);
+                    }
             }
         }
     }
@@ -744,7 +1022,7 @@ public class SudokuPanel extends JPanel {
     }
 
     private void paintLinks(Graphics g) {
-        g.setColor(Color.orange);
+        g.setColor(Color.red);
         if (links != null) {
             Collection<Line> paintedLines = new ArrayList<Line>();
             for (Link link : links) {
@@ -821,13 +1099,82 @@ public class SudokuPanel extends JPanel {
         }
     }
 
+    private void paint2Links(Graphics g, int adj) {
+        g.setColor(Color.red);
+        if (links != null) {
+            Collection<Line> paintedLines = new ArrayList<Line>();
+            for (Link link : links) {
+                double sx = link.getSrcCell().getX() * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 6;
+                double sy = link.getSrcCell().getY() * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 6;
+                int srcValue = link.getSrcValue();
+                if (srcValue > 0) {
+                    sx += ((srcValue - 1) % 3) * (CELL_INNER_SIZE / 3);
+                    sy += ((srcValue - 1) / 3) * (CELL_INNER_SIZE / 3);
+                } else {
+                    sx += CELL_INNER_SIZE / 3;
+                    sy += CELL_INNER_SIZE / 3;
+                }
+                double ex = link.getDstCell().getX() * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 6;
+                double ey = link.getDstCell().getY() * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 6;
+                int dstValue = link.getDstValue();
+                if (dstValue > 0) {
+                    ex += ((dstValue - 1) % 3) * (CELL_INNER_SIZE / 3);
+                    ey += ((dstValue - 1) / 3) * (CELL_INNER_SIZE / 3);
+                } else {
+                    ex += CELL_INNER_SIZE / 3;
+                    ey += CELL_INNER_SIZE / 3;
+                }
+                // Get unity vector
+                double length = Math.sqrt((ex - sx) * (ex - sx) + (ey - sy) * (ey - sy));
+                double ux = (ex - sx) / length;
+                double uy = (ey - sy) / length;
+                // Build line object
+                Line line = new Line((int)sx+adj, (int)sy+adj, (int)ex+adj, (int)ey+adj);
+                // Count number of overlapping lines
+                int countOverlap = 0;
+                for (Line other : paintedLines) {
+                    if (line.overlaps(other))
+                        countOverlap++;
+                }
+                // Move the line perpendicularly to go away from overlapping lines
+                double mx = (uy * ((countOverlap + 1) / 2) * 3.0);
+                double my = (ux * ((countOverlap + 1) / 2) * 3.0);
+                if (countOverlap % 2 == 0)
+                    mx = -mx;
+                else
+                    my = -my;
+                if (length >= CELL_INNER_SIZE / 2) {
+                    // Truncate end points
+                    if (srcValue > 0) {
+                        sx += ux * CELL_INNER_SIZE / 6;
+                        sy += uy * CELL_INNER_SIZE / 6;
+                    }
+                    if (dstValue > 0) {
+                        ex -= ux * CELL_INNER_SIZE / 6;
+                        ey -= uy * CELL_INNER_SIZE / 6;
+                    }
+                    if (dstValue > 0) {
+                        // Draw arrow
+                        double lx = ex - ux * 10 + uy * 4;
+                        double ly = ey - uy * 10 - ux * 4;
+                        double rx = ex - ux * 10 - uy * 4;
+                        double ry = ey - uy * 10 + ux * 4;
+                        g.fillPolygon(new int[] {(int)(ex + mx)+adj, (int)(rx + mx)+adj, (int)(lx + mx)+adj},
+                                      new int[] {(int)(ey + my)+adj, (int)(ry + my)+adj, (int)(ly + my)+adj}, 3);
+                    }
+                    paintedLines.add(line);
+                }
+                // Draw the line
+                g.drawLine((int)(sx + mx)+adj, (int)(sy + my)+adj, (int)(ex + mx)+adj, (int)(ey + my)+adj);
+            }
+        }
+    }
+
     private void paintCursor() {
-        /*
-    if (selectedCell == focusedCell)
-      this.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-    else
-      this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-         */
+//  if (selectedCell == focusedCell)
+//      this.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+//  else
+//      this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 
 }

@@ -32,6 +32,7 @@ public class hints {
     //  PrintWriter     writer = null;
         int             arg;
         char            c;
+        Settings.getInstance().setNoSaves();
         try {
             for (arg = 0; arg < args.length; arg++) {
                 a = s = args[arg];
@@ -60,8 +61,8 @@ public class hints {
                     c = s.charAt(1);
                     if (s.length() > 2)
                         v = s.substring(2);
-                    else if (++arg < args.length)
-                        v = args[arg];
+                    else if ( ( c=='i' || c=='o') && ( (arg+1) < args.length) )
+                        v = args[++arg];
                 }
                 switch (c) {
                 case 'i':
@@ -70,6 +71,14 @@ public class hints {
                 case 'o':
                     output = v;
                     break;
+
+                case 'L':   // LatinSquare
+                    Settings.getInstance().setLatinSquare(true);
+                    break;
+                case 'X':   // Diagonals
+                    Settings.getInstance().setDiagonals(true);
+                    break;
+
                 default:
                     break;
                 }

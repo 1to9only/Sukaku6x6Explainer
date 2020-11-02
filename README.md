@@ -7,17 +7,23 @@ There is some discussion about hard 6x6 sudokus here: http://forum.enjoysudoku.c
 This version of Sudoku6x6Explainer was first released here: http://forum.enjoysudoku.com/post273912.html (2 January 2019).
 
 ## Usage - GUI
-
-  java.exe -jar Sudoku6Explainer.jar
-
+```
+java.exe -jar Sudoku6Explainer.jar
+```
 ## Usage - serate
-
- java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.serate --format="%g ED=%r/%p/%d" --input=puzzles.txt --output=puzzles.rated.txt
-
+```
+java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.serate --format="%g ED=%r/%p/%d" --input=puzzles.txt --output=puzzles.rated.txt [options]
+```
 ## Usage - hints
-
-  java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.hints --input=puzzle.txt
-
+```
+java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.hints --input=puzzle.txt [options]
+```
+## Options
+None, one or both of the following:
+```
+-L      Latin Square
+-X      Diagonals (X)
+```
 # Sukaku6x6Explainer
 
 Sukaku6x6Explainer is my modifications to Sudoku6x6Explainer to support 6x6 sukakus.

@@ -30,6 +30,7 @@ import diuf.sudoku.tools.*;
 public class SudokuExplainer {
 
     private Grid grid; // The Sudoku grid
+    private Grid savedgrid; // The saved Sudoku grid
     private Solver solver; // The Sudoku solver
     private SudokuFrame frame; // The main gui frame
     private SudokuPanel panel; // The sudoku grid panel
@@ -47,6 +48,7 @@ public class SudokuExplainer {
 
     public SudokuExplainer() {
         grid = new Grid();
+        savedgrid = new Grid();
         gridStack = new Stack<Grid>();
         solver = new Solver(grid);
         solver.rebuildPotentialValues();
@@ -258,6 +260,9 @@ public class SudokuExplainer {
             repaintHintsTree();
             repaintHints();
         }
+      if ( solver.isSolved() ) {
+        frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+      }
     }
 
     public void candidateTyped(Cell cell, int candidate) {
@@ -291,6 +296,7 @@ public class SudokuExplainer {
 
     public void clearGrid() {
         grid = new Grid();
+        savedgrid = new Grid();
         gridStack = new Stack<Grid>();
         solver = new Solver(grid);
         solver.rebuildPotentialValues();
@@ -299,15 +305,64 @@ public class SudokuExplainer {
         frame.showWelcomeText();
     }
 
+    private boolean isGridEmpty() {
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                if (grid.getCellValue(x, y) != 0)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public void restartGrid() {
+        if ( this.gridStack.isEmpty() ) {
+            if ( isGridEmpty() ) {
+                JOptionPane.showMessageDialog(frame, "Cannot restart, no puzzle!", "Restart", JOptionPane.WARNING_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(frame, "Cannot restart, not started!", "Restart", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        else {
+            if ( solver.isSolved() ||
+                 JOptionPane.showConfirmDialog(frame, "Restart, Are you sure?", "Restart", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION ) {
+                savedgrid.copyTo(grid);
+                gridStack = new Stack<Grid>();
+                solver = new Solver(grid);
+            //  solver.rebuildPotentialValues();
+                panel.setSudokuGrid(grid);
+                panel.clearSelection();
+                clearHints();
+                frame.showWelcomeText();
+            }
+        }
+    }
+
     public void setGrid(Grid grid) {
         this.grid = grid;
         gridStack = new Stack<Grid>();
+
         solver = new Solver(grid);
         solver.rebuildPotentialValues();
+        grid.copyTo(savedgrid);
         panel.setSudokuGrid(grid);
         panel.clearSelection();
         clearHints();
-        frame.setExplanations("");
+        frame.setExplanations("<html><body><h2>Working...</h2></body></html>");
+    }
+
+    public void newGrid(Grid grid) {
+        this.grid = grid;
+        gridStack = new Stack<Grid>();
+
+        solver = new Solver(grid);
+        solver.rebuildPotentialValues();
+        grid.copyTo(savedgrid);
+        panel.setSudokuGrid(grid);
+        panel.clearSelection();
+        clearHints();
+        frame.setExplanations("<html><body><h2>Finished.</h2></body></html>");
     }
 
     public Grid getGrid() {
@@ -321,6 +376,15 @@ public class SudokuExplainer {
         selectedHints.clear();
         panel.clearSelection();
         repaintAll();
+    }
+
+    public void clearHintsOnly() {
+        unfilteredHints = null;
+        resetFilterCache();
+        filterHints();
+        selectedHints.clear();
+    //  panel.clearSelection();
+    //  repaintAll();
     }
 
     public void clearHints0() {
@@ -409,6 +473,8 @@ public class SudokuExplainer {
     }
 
     public void getNextHint() {
+        clearHintsOnly();
+      if ( !solver.isSolved() ) {
         try {
             Hint hint = getNextHintImpl();
             if (hint != null) {
@@ -419,9 +485,15 @@ public class SudokuExplainer {
         } catch (Throwable ex) {
             displayError(ex);
         }
+      }
+      else {
+        frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+      }
     }
 
     public void getAllHints() {
+        clearHintsOnly();
+      if ( !solver.isSolved() ) {
         try {
             unfilteredHints = solver.getAllHints(frame);
             selectedHints.clear();
@@ -433,6 +505,10 @@ public class SudokuExplainer {
         } catch (Throwable ex) {
             displayError(ex);
         }
+      }
+      else {
+        frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+      }
     }
 
     private void pushGrid() {
@@ -463,13 +539,18 @@ public class SudokuExplainer {
             hint.apply();
         clearHints();
         repaintAll();
+        if ( solver.isSolved() ) {
+            frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+        }
       }
      }
     }
 
     public void applySelectedHintsAndContinue() {
         applySelectedHints();
+      if ( !solver.isSolved() ) {
         getNextHint();
+      }
     }
 
     private void repaintHintsTree() {
@@ -497,12 +578,13 @@ public class SudokuExplainer {
                 solver.rebuildPotentialValues();
             }
             gridStack = new Stack<Grid>();
+            grid.copyTo(savedgrid);
         }
         else {
             copy.copyTo(grid);
         }
         if (message != null)
-            JOptionPane.showMessageDialog(frame, message.toString(), "Paste",
+            JOptionPane.showMessageDialog(frame, message.toString(), "Paste Grid",
                     (message.isFatal() ? JOptionPane.ERROR_MESSAGE : JOptionPane.WARNING_MESSAGE));
     }
 
@@ -510,8 +592,16 @@ public class SudokuExplainer {
         SudokuIO.saveToClipboard(grid);
     }
 
+    public void copyGrid36() {
+        SudokuIO.saveToClipboard36(grid);
+    }
+
     public void copySukaku() {
         SudokuIO.saveSukakuToClipboard(grid);
+    }
+
+    public void copyPencilMarks() {
+        SudokuIO.savePencilMarksToClipboard(grid);
     }
 
     public void loadGrid(File file) {
@@ -525,26 +615,41 @@ public class SudokuExplainer {
                 solver.rebuildPotentialValues();
             }
             gridStack = new Stack<Grid>();
+            grid.copyTo(savedgrid);
         }
         else {
             copy.copyTo(grid);
         }
         if (message != null)
-            JOptionPane.showMessageDialog(frame, message.toString(), "Paste",
+            JOptionPane.showMessageDialog(frame, message.toString(), "Load Grid",
                     (message.isFatal() ? JOptionPane.ERROR_MESSAGE : JOptionPane.WARNING_MESSAGE));
     }
 
     public void saveGrid(File file) {
         ErrorMessage message = SudokuIO.saveToFile(grid, file);
         if (message != null)
-            JOptionPane.showMessageDialog(frame, message.toString(), "Paste",
+            JOptionPane.showMessageDialog(frame, message.toString(), "Save Grid",
+                    JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void saveGrid36(File file) {
+        ErrorMessage message = SudokuIO.saveToFile36(grid, file);
+        if (message != null)
+            JOptionPane.showMessageDialog(frame, message.toString(), "Save 36-chars",
                     JOptionPane.ERROR_MESSAGE);
     }
 
     public void saveSukaku(File file) {
         ErrorMessage message = SudokuIO.saveSukakuToFile(grid, file);
         if (message != null)
-            JOptionPane.showMessageDialog(frame, message.toString(), "Paste",
+            JOptionPane.showMessageDialog(frame, message.toString(), "Save Sukaku",
+                    JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void savePencilMarks(File file) {
+        ErrorMessage message = SudokuIO.savePencilMarksToFile(grid, file);
+        if (message != null)
+            JOptionPane.showMessageDialog(frame, message.toString(), "Save PencilMarks",
                     JOptionPane.ERROR_MESSAGE);
     }
 
@@ -554,6 +659,7 @@ public class SudokuExplainer {
      */
     public void solve() {
         clearHints();
+      if ( !solver.isSolved() ) {
         unfilteredHints = new ArrayList<Hint>();
         Hint hint = solver.bruteForceSolve();
         if (hint != null) {
@@ -562,6 +668,10 @@ public class SudokuExplainer {
         }
         filterHints();
         repaintAll();
+      }
+      else {
+        frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+      }
     }
 
     /**
@@ -572,6 +682,7 @@ public class SudokuExplainer {
     public Hint analyse() {
         try {
             clearHints();
+          if ( !solver.isSolved() ) {
             unfilteredHints = new ArrayList<Hint>();
             Hint hint = solver.analyse(frame);
             if (hint != null) {
@@ -580,6 +691,11 @@ public class SudokuExplainer {
             }
             filterHints();
             return hint;
+          }
+          else {
+            frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+            return null;
+          }
         } catch (UnsupportedOperationException ex) {
             throw ex;
         } catch (Throwable ex) {
@@ -596,6 +712,7 @@ public class SudokuExplainer {
      */
     public void showHint(Hint hint) {
         clearHints();
+      if ( !solver.isSolved() ) {
         unfilteredHints = new ArrayList<Hint>();
         if (hint != null) {
             unfilteredHints.add(hint);
@@ -603,6 +720,10 @@ public class SudokuExplainer {
         }
         filterHints();
         repaintAll();
+      }
+      else {
+        frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+      }
     }
 
     /**
@@ -611,6 +732,7 @@ public class SudokuExplainer {
      */
     public void getClue(boolean isBig) {
         clearHints();
+      if ( !solver.isSolved() ) {
         Hint hint = getNextHintImpl();
         if (hint != null) {
             if (hint instanceof Rule) {
@@ -634,6 +756,10 @@ public class SudokuExplainer {
                 repaintAll();
             }
         }
+      }
+      else {
+        frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+      }
     }
 
     /**

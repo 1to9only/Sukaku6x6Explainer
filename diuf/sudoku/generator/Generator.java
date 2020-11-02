@@ -17,6 +17,9 @@ public class Generator {
     private final BruteForceAnalysis analyser = new BruteForceAnalysis(true);
     private boolean isInterrupted = false;
 
+    public boolean isButtonStopped() {
+       return isInterrupted;
+    }
 
     /**
      * Generate a Sudoku grid matching the given parameters.
@@ -40,8 +43,11 @@ public class Generator {
             symmetryIndex = (symmetryIndex + 1) % symmetries.size();
             Grid grid = generate(random, symmetry);
 
-            if (isInterrupted)
+            if (isInterrupted) {
+                System.err.println("Stopped.");
+                System.err.flush();
                 return null;
+            }
 
             // Analyse difficulty
             Grid copy = new Grid();
@@ -49,12 +55,24 @@ public class Generator {
             Solver solver = new Solver(copy);
             solver.rebuildPotentialValues();
             double difficulty = solver.analyseDifficulty(minDifficulty, maxDifficulty);
+            String s = "";
+            for (int i = 0; i < 36; i++) {
+                int n = grid.getCellValue(i % 6, i / 6);
+                s += (n==0)?".":n;
+            }
+            System.err.println(s);
+            int w = (int)((difficulty + 0.05) * 10);
+            int p = w % 10; w /= 10;
+            System.err.println("ED=" + w + "." + p);
+            System.err.flush();
             if (difficulty >= minDifficulty && difficulty <= maxDifficulty)
                 return grid;
 
-            if (isInterrupted)
+            if (isInterrupted) {
+                System.err.println("Stopped.");
+                System.err.flush();
                 return null;
-
+            }
         }
     }
 
@@ -68,7 +86,10 @@ public class Generator {
 
         // Build the solution
         Grid grid = new Grid();
-        boolean result = analyser.solveRandom(grid, rnd);
+        boolean result = analyser.solveRandom(this, grid, rnd);
+        if (isInterrupted) {
+            return null;
+        }
 //a     assert result;
         Grid solution = new Grid();
         grid.copyTo(solution);
@@ -129,8 +150,28 @@ public class Generator {
                 }
                 index = (index + 1) % 36; // Next index (indexing scrambled array of indexes)
                 countDown--;
+                if (isInterrupted) {
+                    countDown = 0;
+                }
             } while (!isSuccess && countDown > 0);
         }
+        String s = ""; int cnt = 0;
+        for (int i = 0; i < 36; i++) {
+            int n = grid.getCellValue(i % 6, i / 6);
+            if ( n != 0 ) { cnt++; }
+            if (isInterrupted) {
+            }
+        }
+        if ( cnt < 10 ) { s += " "; }
+        s += " " + cnt + " ";
+      if (!isInterrupted) {
+        s = s + "got new sudoku";
+      }
+      if ( s.length() != 0 ) {
+        System.err.println(s);
+        System.err.flush();
+      }
+
         return grid;
     }
 
