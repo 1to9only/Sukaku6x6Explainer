@@ -60,6 +60,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JPanel hintsTreePanel = null;
     private JCheckBox chkFilter = null;
     private JButton btnCheckValidity = null;
+    private JButton btnApplySingles = null;
     private JButton btnApplyHint = null;
     private JComboBox<String> cmbViewSelector = null;
     private JPanel hintsSouthPanel = null;
@@ -528,6 +529,11 @@ public class SudokuFrame extends JFrame implements Asker {
             gridBagConstraints3.weightx = 1.0D;
             gridBagConstraints3.gridy = 0;
 
+            GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+            gridBagConstraints4.gridx = 4;
+            gridBagConstraints4.weightx = 1.0D;
+            gridBagConstraints4.gridy = 0;
+
             GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
             gridBagConstraints5.gridx = 5;
             gridBagConstraints5.weightx = 1.0D;
@@ -553,7 +559,8 @@ public class SudokuFrame extends JFrame implements Asker {
             buttonsPane.add(getBtnCheckValidity(),   gridBagConstraints0);
             buttonsPane.add(getBtnApplyHintAndGet(), gridBagConstraints1);
             buttonsPane.add(getBtnGetNextHint(),     gridBagConstraints2);
-            buttonsPane.add(getBtnApplyHint(),       gridBagConstraints3);
+            buttonsPane.add(getBtnApplySingles(),    gridBagConstraints3);
+            buttonsPane.add(getBtnApplyHint(),       gridBagConstraints4);
             buttonsPane.add(getBtnGetAllHints(),     gridBagConstraints5);
             buttonsPane.add(getBtnUndoStep(),        gridBagConstraints6);
             buttonsPane.add(getBtnQuit(),            gridBagConstraints7);
@@ -561,6 +568,53 @@ public class SudokuFrame extends JFrame implements Asker {
         return buttonsPane;
     }
 
+
+    private JButton getBtnCheckValidity() {
+        if (btnCheckValidity == null) {
+            btnCheckValidity = new JButton();
+            btnCheckValidity.setText("Check validity");
+            btnCheckValidity.setToolTipText("Verify the validity of the entered Sudoku");
+            btnCheckValidity.setMnemonic(java.awt.event.KeyEvent.VK_V);
+            btnCheckValidity.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    if (engine.checkValidity())
+                        setExplanations(HtmlLoader.loadHtml(this, "Valid.html"));
+                }
+            });
+        }
+        return btnCheckValidity;
+    }
+
+    private JButton getBtnApplySingles() {
+        if (btnApplySingles == null) {
+            btnApplySingles = new JButton();
+            btnApplySingles.setText("Apply Singles");
+            btnApplySingles.setToolTipText("Apply all (hidden and naked) singles");
+            btnApplySingles.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    engine.ApplySingles();
+                }
+            });
+        }
+        return btnApplySingles;
+    }
+
+    JButton getBtnApplyHintAndGet() {
+        if (btnApplyHintAndGet == null) {
+            btnApplyHintAndGet = new JButton();
+            btnApplyHintAndGet.setText("Solve step");
+            btnApplyHintAndGet.setMnemonic(java.awt.event.KeyEvent.VK_S);
+            btnApplyHintAndGet.setToolTipText("Apply the current hint (if any is shown), and get an hint for the next step");
+            btnApplyHintAndGet.setFont(new java.awt.Font("Dialog", java.awt.Font.BOLD, 12));
+            btnApplyHintAndGet.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    engine.applySelectedHintsAndContinue();
+                }
+            });
+        }
+        return btnApplyHintAndGet;
+    }
 
     private JButton getBtnGetNextHint() {
         if (btnGetNextHint == null) {
@@ -576,6 +630,22 @@ public class SudokuFrame extends JFrame implements Asker {
             });
         }
         return btnGetNextHint;
+    }
+
+    private JButton getBtnApplyHint() {
+        if (btnApplyHint == null) {
+            btnApplyHint = new JButton();
+            btnApplyHint.setText("Apply hint");
+            btnApplyHint.setMnemonic(KeyEvent.VK_P);
+            btnApplyHint.setToolTipText("Apply the selected hint(s)");
+            btnApplyHint.setEnabled(false);
+            btnApplyHint.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    engine.applySelectedHints();
+                }
+            });
+        }
+        return btnApplyHint;
     }
 
     private JButton getBtnGetAllHints() {
@@ -608,23 +678,6 @@ public class SudokuFrame extends JFrame implements Asker {
             });
         }
         return btnUndoStep;
-    }
-
-    JButton getBtnApplyHintAndGet() {
-        if (btnApplyHintAndGet == null) {
-            btnApplyHintAndGet = new JButton();
-            btnApplyHintAndGet.setText("Solve step");
-            btnApplyHintAndGet.setMnemonic(java.awt.event.KeyEvent.VK_S);
-            btnApplyHintAndGet.setToolTipText("Apply the current hint (if any is shown), and get an hint for the next step");
-            btnApplyHintAndGet.setFont(new java.awt.Font("Dialog", java.awt.Font.BOLD, 12));
-            btnApplyHintAndGet.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    engine.applySelectedHintsAndContinue();
-                }
-            });
-        }
-        return btnApplyHintAndGet;
     }
 
     private JButton getBtnQuit() {
@@ -696,38 +749,6 @@ public class SudokuFrame extends JFrame implements Asker {
             });
         }
         return chkFilter;
-    }
-
-    private JButton getBtnCheckValidity() {
-        if (btnCheckValidity == null) {
-            btnCheckValidity = new JButton();
-            btnCheckValidity.setText("Check validity");
-            btnCheckValidity.setToolTipText("Verify the validity of the entered Sudoku");
-            btnCheckValidity.setMnemonic(java.awt.event.KeyEvent.VK_V);
-            btnCheckValidity.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    if (engine.checkValidity())
-                        setExplanations(HtmlLoader.loadHtml(this, "Valid.html"));
-                }
-            });
-        }
-        return btnCheckValidity;
-    }
-
-    private JButton getBtnApplyHint() {
-        if (btnApplyHint == null) {
-            btnApplyHint = new JButton();
-            btnApplyHint.setText("Apply hint");
-            btnApplyHint.setMnemonic(KeyEvent.VK_P);
-            btnApplyHint.setToolTipText("Apply the selected hint(s)");
-            btnApplyHint.setEnabled(false);
-            btnApplyHint.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    engine.applySelectedHints();
-                }
-            });
-        }
-        return btnApplyHint;
     }
 
     private JComboBox<String> getCmbViewSelector() {
@@ -999,8 +1020,8 @@ public class SudokuFrame extends JFrame implements Asker {
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File file = chooser.getSelectedFile();
                             try {
-                                if (!file.getName().endsWith(".txt") &&
-                                        file.getName().indexOf('.') < 0)
+                                if (!file.getName().endsWith(".txt")) // &&
+                                    //  file.getName().indexOf('.') < 0)
                                     file = new File(file.getCanonicalPath() + ".txt");
                             } catch (IOException ex) {
                                 ex.printStackTrace();
@@ -1041,8 +1062,8 @@ public class SudokuFrame extends JFrame implements Asker {
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File file = chooser.getSelectedFile();
                             try {
-                                if (!file.getName().endsWith(".txt") &&
-                                        file.getName().indexOf('.') < 0)
+                                if (!file.getName().endsWith(".txt")) // &&
+                                    //  file.getName().indexOf('.') < 0)
                                     file = new File(file.getCanonicalPath() + ".txt");
                             } catch (IOException ex) {
                                 ex.printStackTrace();
@@ -1083,8 +1104,8 @@ public class SudokuFrame extends JFrame implements Asker {
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File file = chooser.getSelectedFile();
                             try {
-                                if (!file.getName().endsWith(".txt") &&
-                                        file.getName().indexOf('.') < 0)
+                                if (!file.getName().endsWith(".txt")) // &&
+                                    //  file.getName().indexOf('.') < 0)
                                     file = new File(file.getCanonicalPath() + ".txt");
                             } catch (IOException ex) {
                                 ex.printStackTrace();
@@ -1125,8 +1146,8 @@ public class SudokuFrame extends JFrame implements Asker {
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File file = chooser.getSelectedFile();
                             try {
-                                if (!file.getName().endsWith(".txt") &&
-                                        file.getName().indexOf('.') < 0)
+                                if (!file.getName().endsWith(".txt")) // &&
+                                    //  file.getName().indexOf('.') < 0)
                                     file = new File(file.getCanonicalPath() + ".txt");
                             } catch (IOException ex) {
                                 ex.printStackTrace();
@@ -1166,8 +1187,8 @@ public class SudokuFrame extends JFrame implements Asker {
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File file = chooser.getSelectedFile();
                             try {
-                                if (!file.getName().endsWith(".png") &&
-                                        file.getName().indexOf('.') < 0)
+                                if (!file.getName().endsWith(".png")) // &&
+                                    //  file.getName().indexOf('.') < 0)
                                     file = new File(file.getCanonicalPath() + ".png");
                             } catch (IOException ex) {
                                 ex.printStackTrace();

@@ -1,5 +1,9 @@
 Changes:
 
+20201103:
+- add apply singles button
+- fix auto file extention
+
 20201102:
 - added variants (LS/X), and other improvements
 - settings saved to a json file

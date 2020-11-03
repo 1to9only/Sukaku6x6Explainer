@@ -491,6 +491,38 @@ public class SudokuExplainer {
       }
     }
 
+    public void ApplySingles() {
+     if ( isGridEmpty() ) {
+        JOptionPane.showMessageDialog(frame, "Cannot apply singles, no puzzle!", "Apply Singles", JOptionPane.WARNING_MESSAGE);
+        return;
+     }
+     int basics = 1;
+     boolean solved = solver.isSolved();
+     while ( basics == 1 ) {
+      if ( !solved ) {
+       if ( selectedHints.size() >= 1 ) {
+        for (Hint hint : selectedHints) {
+            Rule rule = (Rule)hint;
+            String rulename = rule.getName();
+            if ( rulename.equals("Hidden Single") || rulename.equals("Naked Single") ) {
+                pushGrid();
+                hint.apply();
+            }
+            else { basics = 0; }
+        }
+        clearHints();
+        repaintAll();
+        solved = solver.isSolved();
+        if ( basics == 1 && solved ) { basics = 0; }
+       }
+       if ( basics == 1 && !solved ) { Thread.yield(); getNextHint(); }
+      }
+     }
+     if ( solved ) {
+        frame.setExplanations("<html><body><h2>The Sudoku has been solved !</h2></body></html>");
+     }
+    }
+
     public void getAllHints() {
         clearHintsOnly();
       if ( !solver.isSolved() ) {
