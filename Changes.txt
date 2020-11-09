@@ -1,8 +1,11 @@
 Changes:
 
+2020110x:
+- fix apply singles, save techniques, and other changes
+
 20201103:
 - add apply singles button
-- fix auto file extention
+- fix auto file extension
 
 20201102:
 - added variants (LS/X), and other improvements
