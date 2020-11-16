@@ -81,7 +81,11 @@ public class SudokuIO {
         int cluecount = 0;
         while ( cluenum < linelen ) {
             ch = line.charAt(cluenum++);
-            if (ch >= '1' && ch <= '9') { cluecount++; ispad = 0; grpcnt++; }
+            if (ch >= '1' && ch <= '6') { cluecount++; ispad = 0; grpcnt++; }
+            else
+            if (ch >= 'A' && ch <= 'F' && Settings.getInstance().isAlphabet()) { cluecount++; ispad = 0; grpcnt++; }
+            else
+            if (ch >= 'a' && ch <= 'f' && Settings.getInstance().isAlphabet()) { cluecount++; ispad = 0; grpcnt++; }
             else
             if (ch == '.' || ch == '0') { cluecount++; ispad = 0; grpcnt++; }
             else
@@ -109,6 +113,30 @@ public class SudokuIO {
                 chispad = true;
                 if (ch >= '1' && ch <= '6') {
                     int value = ch - '0';
+                    Cell cell = grid.getCell(cellnum % 6, cellnum / 6);
+                    cell.addPotentialValue(value);
+                    chispad = false;
+                    cluecounter++;
+                    if ( cluecounter == 6 ) {
+                       cluecounter = 0;
+                       cellnum++;
+                    }
+                }
+                else
+                if (ch >= 'A' && ch <= 'F' && Settings.getInstance().isAlphabet()) {
+                    int value = ch - 'A'+1;
+                    Cell cell = grid.getCell(cellnum % 6, cellnum / 6);
+                    cell.addPotentialValue(value);
+                    chispad = false;
+                    cluecounter++;
+                    if ( cluecounter == 6 ) {
+                       cluecounter = 0;
+                       cellnum++;
+                    }
+                }
+                else
+                if (ch >= 'a' && ch <= 'f' && Settings.getInstance().isAlphabet()) {
+                    int value = ch - 'a'+1;
                     Cell cell = grid.getCell(cellnum % 6, cellnum / 6);
                     cell.addPotentialValue(value);
                     chispad = false;
@@ -167,6 +195,18 @@ public class SudokuIO {
                     cellnum++;
                 }
                 else
+                if (ch >= 'A' && ch <= 'F' && Settings.getInstance().isAlphabet()) {
+                    int value = ch - 'A'+1;
+                    grid.setCellValue(cellnum % 6, cellnum / 6, value);
+                    cellnum++;
+                }
+                else
+                if (ch >= 'a' && ch <= 'f' && Settings.getInstance().isAlphabet()) {
+                    int value = ch - 'a'+1;
+                    grid.setCellValue(cellnum % 6, cellnum / 6, value);
+                    cellnum++;
+                }
+                else
                 if (ch == '.' || ch == '0') {
                     cellnum++;
                 }
@@ -178,39 +218,59 @@ public class SudokuIO {
     }
 
     private static void saveToWriter(Grid grid, Writer writer) throws IOException {
+        boolean isAlpha = Settings.getInstance().isAlphabet();
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                 int value = grid.getCellValue(x, y);
                 int ch = '.';
+              if ( !isAlpha ) {
                 if (value > 0)
                     ch = '0' + value;
-                writer.write(ch);
+              }
+              if (  isAlpha ) {
+                if (value > 0)
+                    ch = 'A'-1 + value;
+              }
+                writer.write((char)ch);
             }
             writer.write("\r\n");
         }
     }
 
     private static void saveToWriter36(Grid grid, Writer writer) throws IOException {
+        boolean isAlpha = Settings.getInstance().isAlphabet();
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                 int value = grid.getCellValue(x, y);
                 int ch = '.';
+              if ( !isAlpha ) {
                 if (value > 0)
                     ch = '0' + value;
-                writer.write(ch);
+              }
+              if (  isAlpha ) {
+                if (value > 0)
+                    ch = 'A'-1 + value;
+              }
+                writer.write((char)ch);
             }
         }
         writer.write("\r\n");
     }
 
     private static void saveSukakuToWriter(Grid grid, Writer writer) throws IOException {
+        boolean isAlpha = Settings.getInstance().isAlphabet();
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);
                 int n = cell.getValue();
                 for (int pv=1; pv<=6; pv++ ) {
                     if ( pv == n || cell.hasPotentialValue( pv) ) {
+                      if ( !isAlpha ) {
                         writer.write('0'+pv);
+                      }
+                      if (  isAlpha ) {
+                        writer.write((char)('A'-1+pv));
+                      }
                     }
                     else {
                         writer.write('.');
@@ -222,6 +282,7 @@ public class SudokuIO {
     }
 
     private static void savePencilMarksToWriter(Grid grid, Writer writer) throws IOException {
+        boolean isAlpha = Settings.getInstance().isAlphabet();
         int crd = 1;
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
@@ -252,13 +313,23 @@ public class SudokuIO {
                         Cell cell = grid.getCell(c % 6, c / 6);
                         int n = cell.getValue();
                         if ( n != 0 ) {
+                          if ( !isAlpha ) {
                             s += n;
+                          }
+                          if (  isAlpha ) {
+                            s += (char)('A'-1+n);
+                          }
                             cnt += 1;
                         }
                         if ( n == 0 ) {
                             for (int pv=1; pv<=6; pv++ ) {
                                 if ( cell.hasPotentialValue( pv) ) {
+                                  if ( !isAlpha ) {
                                     s += pv;
+                                  }
+                                  if (  isAlpha ) {
+                                    s += (char)('A'-1+pv);
+                                  }
                                     cnt += 1;
                                 }
                             }

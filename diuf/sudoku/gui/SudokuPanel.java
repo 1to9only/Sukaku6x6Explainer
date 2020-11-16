@@ -71,6 +71,14 @@ public class SudokuPanel extends JPanel {
     public SudokuPanel(SudokuFrame parent) {
         super();
         this.parent = parent;
+      if ( !Settings.getInstance().isBigCell() ) {
+        CELL_OUTER_SIZE = 45;
+        CELL_INNER_SIZE = 39;
+        CELL_PAD = (CELL_OUTER_SIZE - CELL_INNER_SIZE) / 2;
+        GRID_SIZE = CELL_OUTER_SIZE * 6;
+        FONT_SIZE_SMALL = 12;
+        FONT_SIZE_BIG = 36;
+      }
         if (getToolkit().getScreenSize().height < 750)
             rescale();
         initialize();
@@ -209,6 +217,16 @@ public class SudokuPanel extends JPanel {
                     char ch = e.getKeyChar();
                     if (ch >= '1' && ch <= '6') {
                         int value = ch - '0';
+                        engine.cellValueTyped(selectedCell, value);
+                        repaint();
+                        isProcessed = true;
+                    } else if (ch >= 'A' && ch <= 'F' && Settings.getInstance().isAlphabet()) {
+                        int value = ch - 'A'+1;
+                        engine.cellValueTyped(selectedCell, value);
+                        repaint();
+                        isProcessed = true;
+                    } else if (ch >= 'a' && ch <= 'f' && Settings.getInstance().isAlphabet()) {
+                        int value = ch - 'a'+1;
                         engine.cellValueTyped(selectedCell, value);
                         repaint();
                         isProcessed = true;
@@ -901,10 +919,17 @@ public class SudokuPanel extends JPanel {
                             int cy = y * CELL_OUTER_SIZE + CELL_PAD
                             + (index / 3) * (CELL_INNER_SIZE / 3) + CELL_INNER_SIZE / 6;
                             boolean isHighlighted = initPotentialColor(g, cell, value);
+                          if ( !Settings.getInstance().isAlphabet() ) {
                             if (isHighlighted)
                                 drawStringCentered3D(g, "" + value, cx, cy);
                             else if (paintIt)
                                 drawStringCentered(g, "" + value, cx, cy);
+                          } else {
+                            if (isHighlighted)
+                                drawStringCentered3D(g, ""+(char)('A'-1+ value), cx, cy);
+                            else if (paintIt)
+                                drawStringCentered(g, ""+(char)('A'-1+value), cx, cy);
+                          }
                         }
                         index++;
                     }
@@ -928,7 +953,11 @@ public class SudokuPanel extends JPanel {
                             int cy = y * CELL_OUTER_SIZE + CELL_PAD
                             + (index / 3) * (CELL_INNER_SIZE / 3) + CELL_INNER_SIZE / 6;
                             init2PotentialColor(g, cell, value);
+                          if ( !Settings.getInstance().isAlphabet() ) {
                             drawStringCentered(g, "" + value, cx+adj, cy+adj);
+                          } else {
+                            drawStringCentered(g, ""+(char)('A'-1+value), cx+adj, cy+adj);
+                          }
                         }
                         index++;
                     }
@@ -951,7 +980,11 @@ public class SudokuPanel extends JPanel {
                         int cx = x * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;
                         int cy = y * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;
                         initValueColor(g, cell);
+                      if ( !Settings.getInstance().isAlphabet() ) {
                         drawStringCentered(g, "" + cell.getValue(), cx, cy);
+                      } else {
+                        drawStringCentered(g, ""+(char)('A'-1+cell.getValue()), cx, cy);
+                      }
                     }
                 }
             }
@@ -968,7 +1001,11 @@ public class SudokuPanel extends JPanel {
                         int cx = x * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;
                         int cy = y * CELL_OUTER_SIZE + CELL_PAD + CELL_INNER_SIZE / 2;
                         initValueColor(g, cell);
+                      if ( !Settings.getInstance().isAlphabet() ) {
                         drawStringCentered(g, "" + cell.getValue(), cx+adj, cy+adj);
+                      } else {
+                        drawStringCentered(g, ""+(char)('A'-1+cell.getValue()), cx+adj, cy+adj);
+                      }
                     }
             }
         }

@@ -1,6 +1,9 @@
 Changes:
 
-2020110x:
+20201116:
+- add isAlphabet, isBigCell - via Settings
+
+20201109:
 - fix apply singles, save techniques, and other changes
 
 20201103:
