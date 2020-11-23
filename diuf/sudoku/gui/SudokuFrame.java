@@ -105,6 +105,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JRadioButtonMenuItem mitMathMode = null;
     private JRadioButtonMenuItem mitChessMode = null;
     private JCheckBoxMenuItem mitAntiAliasing = null;
+    private JCheckBoxMenuItem mitBig = null;
     private JMenu helpMenu = null;
     private JMenuItem mitAbout = null;
     private JMenuItem mitGetSmallClue = null;
@@ -403,10 +404,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JScrollPane getHintsDetailScrollPane() {
         if (hintDetailsPane == null) {
             hintDetailsPane = new JScrollPane();
-            if (getToolkit().getScreenSize().height < 800)
-                hintDetailsPane.setPreferredSize(new java.awt.Dimension(700,110));
-            else
-                hintDetailsPane.setPreferredSize(new java.awt.Dimension(800,200));
+            hintDetailsPane.setPreferredSize(new java.awt.Dimension(800,200));
             hintDetailsPane.setViewportView(getHintDetailArea());
         }
         return hintDetailsPane;
@@ -1605,6 +1603,7 @@ public class SudokuFrame extends JFrame implements Asker {
             optionsMenu.addSeparator();
             optionsMenu.add(getMitLookAndFeel());
             optionsMenu.add(getMitAntiAliasing());
+            optionsMenu.add(getMitBig());
             ButtonGroup group = new ButtonGroup();
             group.add(getMitChessMode());
             group.add(getMitMathMode());
@@ -1774,6 +1773,21 @@ public class SudokuFrame extends JFrame implements Asker {
             });
         }
         return mitAntiAliasing;
+    }
+
+    private JCheckBoxMenuItem getMitBig() {
+        if (mitBig == null) {
+            mitBig = new JCheckBoxMenuItem();
+            mitBig.setText("Bigger Cells (requires Restart)");
+            mitBig.setSelected(Settings.getInstance().isBigCell());
+            mitBig.setToolTipText("Make cell size bigger (better on 1920x1080 screen)");
+            mitBig.addItemListener(new java.awt.event.ItemListener() {
+                public void itemStateChanged(java.awt.event.ItemEvent e) {
+                    Settings.getInstance().setBigCell(mitBig.isSelected());
+                }
+            });
+        }
+        return mitBig;
     }
 
     private JMenu getHelpMenu() {

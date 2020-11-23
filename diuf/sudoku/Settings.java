@@ -141,6 +141,11 @@ public class Settings {
         return this.isAlphabet;
     }
 
+    public void setBigCell(boolean isBigCell) {
+        this.isBigCell = isBigCell;
+        save();
+    }
+
     public boolean isBigCell() {
         return this.isBigCell;
     }
@@ -581,6 +586,8 @@ public class Settings {
         if ( methods != null ) {
             stgDetails.put("techniques", methods);
         }
+
+        stgDetails.put("isBigCell", isBigCell?"true":"false");
 
         JSONObject stgObject = new JSONObject();
         stgObject.put("Settings", stgDetails);

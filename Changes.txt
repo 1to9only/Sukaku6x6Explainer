@@ -1,5 +1,9 @@
 Changes:
 
+20201123:
+- isBigCell - now in Options
+- add Dark Look and Feel from: https://www.formdev.com/flatlaf/ [0.42]
+
 20201116:
 - add isAlphabet, isBigCell - via Settings
 
