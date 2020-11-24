@@ -571,7 +571,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JButton getBtnCheckValidity() {
         if (btnCheckValidity == null) {
             btnCheckValidity = new JButton();
-            btnCheckValidity.setText("|F2| Check validity");
+            btnCheckValidity.setText("F2| Check validity");
             btnCheckValidity.setToolTipText("Verify the validity of the entered Sudoku");
             btnCheckValidity.setMnemonic(java.awt.event.KeyEvent.VK_F2);
             btnCheckValidity.addActionListener(new java.awt.event.ActionListener() {
@@ -587,7 +587,7 @@ public class SudokuFrame extends JFrame implements Asker {
     JButton getBtnApplyHintAndGet() {
         if (btnApplyHintAndGet == null) {
             btnApplyHintAndGet = new JButton();
-            btnApplyHintAndGet.setText("|F3| Solve step");
+            btnApplyHintAndGet.setText("F3| Solve step");
             btnApplyHintAndGet.setMnemonic(java.awt.event.KeyEvent.VK_F3);
             btnApplyHintAndGet.setToolTipText("Apply the current hint (if any is shown), and get an hint for the next step");
             btnApplyHintAndGet.setFont(new java.awt.Font("Dialog", java.awt.Font.BOLD, 12));
@@ -604,7 +604,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JButton getBtnGetNextHint() {
         if (btnGetNextHint == null) {
             btnGetNextHint = new JButton();
-            btnGetNextHint.setText("|F4| Get next hint");
+            btnGetNextHint.setText("F4| Get next hint");
             btnGetNextHint.setToolTipText("Get another, different hint");
             btnGetNextHint.setMnemonic(java.awt.event.KeyEvent.VK_F4);
             btnGetNextHint.addActionListener(new java.awt.event.ActionListener() {
@@ -634,7 +634,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JButton getBtnApplyHint() {
         if (btnApplyHint == null) {
             btnApplyHint = new JButton();
-            btnApplyHint.setText("|F5| Apply hint");
+            btnApplyHint.setText("F5| Apply hint");
             btnApplyHint.setToolTipText("Apply the selected hint(s)");
             btnApplyHint.setMnemonic(KeyEvent.VK_F5);
             btnApplyHint.setEnabled(false);
@@ -650,7 +650,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JButton getBtnGetAllHints() {
         if (btnGetAllHints == null) {
             btnGetAllHints = new JButton();
-            btnGetAllHints.setText("|F6| Get all hints");
+            btnGetAllHints.setText("F6| Get all hints");
             btnGetAllHints.setToolTipText("Get all hints applicable on the current situation");
             btnGetAllHints.setMnemonic(KeyEvent.VK_F6);
             btnGetAllHints.addActionListener(new java.awt.event.ActionListener() {
@@ -672,7 +672,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JButton getBtnUndoStep() {
         if (btnUndoStep == null) {
             btnUndoStep = new JButton();
-            btnUndoStep.setText("|Ctrl-Z| Undo step");
+            btnUndoStep.setText("Ctrl-Z| Undo step");
             btnUndoStep.setToolTipText("Undo previous solve step or value selection");
             btnUndoStep.setMnemonic(KeyEvent.VK_Z);
             btnUndoStep.addActionListener(new java.awt.event.ActionListener() {
@@ -688,7 +688,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JButton getBtnQuit() {
         if (btnQuit == null) {
             btnQuit = new JButton();
-            btnQuit.setText("|Ctrl-Q| Quit");
+            btnQuit.setText("Ctrl-Q| Quit");
             btnQuit.setToolTipText("Quit the application");
             btnQuit.setMnemonic(java.awt.event.KeyEvent.VK_Q);
             btnQuit.addActionListener(new java.awt.event.ActionListener() {
