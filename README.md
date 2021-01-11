@@ -48,12 +48,14 @@ Usage is as for Sudoku6x6Explainer
 ## Screenshots
 
 ![](/images/sudoku6.rc23.71.png)
+
 2Rx3C, ED=7.1
 ```
 ....1..2...3.....4..56........34....  8 ED=7.1/1.2/1.2
 ```
 
 ![](/images/sudoku6.rc23.png)
+
 2Rx3C
 ```
 .....12....3..2.......45.16.........  8 ED=1.5/1.2/1.2
@@ -64,6 +66,7 @@ Usage is as for Sudoku6x6Explainer
 ```
 
 ![](/images/sudoku6.rc32.png)
+
 3Rx2C
 ```
 .......1..2.3..4..5..2......1......6  8 ED=1.5/1.2/1.2
@@ -74,6 +77,7 @@ Usage is as for Sudoku6x6Explainer
 ```
 
 ![](/images/sudoku6.ls.png)
+
 Latin Square
 ```
 .1.2...2......3.4.......25.1......3.  9 ED=1.5/1.5/1.5
