@@ -219,22 +219,64 @@ public class SudokuIO {
 
     private static void saveToWriter(Grid grid, Writer writer) throws IOException {
         boolean isAlpha = Settings.getInstance().isAlphabet();
-        for (int y = 0; y < 6; y++) {
-            for (int x = 0; x < 6; x++) {
-                int value = grid.getCellValue(x, y);
-                int ch = '.';
-              if ( !isAlpha ) {
-                if (value > 0)
-                    ch = '0' + value;
-              }
-              if (  isAlpha ) {
-                if (value > 0)
-                    ch = 'A'-1 + value;
-              }
-                writer.write((char)ch);
-            }
-            writer.write("\r\n");
+        boolean isLatin = Settings.getInstance().isLatinSquare();
+        int y = 0, x = 0;
+        if ( Settings.getInstance().isRC23() ) {
+            y = 2; x = 3;
         }
+        else {
+            y = 3; x = 2;
+        }
+        String s = "";
+        for (int i=0; i<x; i++ ) {
+          if ( i == 0 || !isLatin ) {
+            s = "+";
+            for (int j=0; j<y; j++ ) {
+                for (int k=0; k<x; k++ ) { s += "-";
+                    s += "-";
+                }
+              if ( j+1 == y || !isLatin )
+                s += "-+";
+            }
+            writer.write(s + "\r\n");
+          }
+
+            for (int j=0; j<y; j++ ) {
+                s = "|";
+                for (int k=0; k<y; k++ ) {
+                    for (int l=0; l<x; l++ ) {
+                        s += " ";
+                        int c = (((i*y)+j)*6)+k*x+l;
+                        Cell cell = grid.getCell(c % 6, c / 6);
+                        int value = cell.getValue();
+                        int ch = '.';
+                      if ( !isAlpha ) {
+                        if ( value > 0 )
+                            ch = '0' + value;
+                      }
+                      if (  isAlpha ) {
+                        if ( value > 0 )
+                            ch = 'A'-1 + value;
+                      }
+                        s += (char)ch;
+                    }
+                  if ( k+1 == y || !isLatin )
+                    s += " |";
+                }
+                writer.write(s + "\r\n");
+            }
+        }
+
+        s = "+";
+        for (int j=0; j<y; j++ ) {
+            for (int k=0; k<x; k++ ) { s += "-";
+                s += "-";
+            }
+          if ( j+1 == y || !isLatin )
+            s += "-+";
+        }
+        writer.write(s + "\r\n");
+        writer.write("\r\n");
     }
 
     private static void saveToWriter36(Grid grid, Writer writer) throws IOException {
@@ -283,6 +325,7 @@ public class SudokuIO {
 
     private static void savePencilMarksToWriter(Grid grid, Writer writer) throws IOException {
         boolean isAlpha = Settings.getInstance().isAlphabet();
+        boolean isLatin = Settings.getInstance().isLatinSquare();
         int crd = 1;
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
@@ -291,25 +334,35 @@ public class SudokuIO {
             }
         }
 
+        int y = 0, x = 0;
+        if ( Settings.getInstance().isRC23() ) {
+            y = 2; x = 3;
+        }
+        else {
+            y = 3; x = 2;
+        }
         String s = "";
-        for (int i=0; i<3; i++ ) {
+        for (int i=0; i<x; i++ ) {
+          if ( i == 0 || !isLatin ) {
             s = "+";
-            for (int j=0; j<2; j++ ) {
-                for (int k=0; k<3; k++ ) { s += "-";
+            for (int j=0; j<y; j++ ) {
+                for (int k=0; k<x; k++ ) { s += "-";
                     for (int l=0; l<crd; l++ ) { s += "-";
                     }
                 }
+              if ( j+1 == y || !isLatin )
                 s += "-+";
             }
             writer.write(s + "\r\n");
+          }
 
-            for (int j=0; j<2; j++ ) {
+            for (int j=0; j<y; j++ ) {
                 s = "|";
-                for (int k=0; k<2; k++ ) {
-                    for (int l=0; l<3; l++ ) {
+                for (int k=0; k<y; k++ ) {
+                    for (int l=0; l<x; l++ ) {
                         s += " ";
                         int cnt = 0;
-                        int c = (((i*2)+j)*6)+k*3+l;
+                        int c = (((i*y)+j)*6)+k*x+l;
                         Cell cell = grid.getCell(c % 6, c / 6);
                         int n = cell.getValue();
                         if ( n != 0 ) {
@@ -337,6 +390,7 @@ public class SudokuIO {
                         for (int pad=cnt; pad<crd; pad++ ) { s += " ";
                         }
                     }
+                  if ( k+1 == y || !isLatin )
                     s += " |";
                 }
                 writer.write(s + "\r\n");
@@ -344,11 +398,12 @@ public class SudokuIO {
         }
 
         s = "+";
-        for (int j=0; j<2; j++ ) {
-            for (int k=0; k<3; k++ ) { s += "-";
+        for (int j=0; j<y; j++ ) {
+            for (int k=0; k<x; k++ ) { s += "-";
                 for (int l=0; l<crd; l++ ) { s += "-";
                 }
             }
+          if ( j+1 == y || !isLatin )
             s += "-+";
         }
         writer.write(s + "\r\n");

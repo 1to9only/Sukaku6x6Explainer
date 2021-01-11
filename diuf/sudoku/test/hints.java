@@ -72,6 +72,13 @@ public class hints {
                     output = v;
                     break;
 
+                case '2':   // R2xC3
+                    Settings.getInstance().setRC23(true);
+                    break;
+                case '3':   // R3xC2
+                    Settings.getInstance().setRC23(false);
+                    break;
+
                 case 'L':   // LatinSquare
                     Settings.getInstance().setLatinSquare(true);
                     break;

@@ -37,7 +37,8 @@ public class SudokuPanel extends JPanel {
     private int LEGEND_GAP_SIZE = 42;
     private int CELL_PAD = (CELL_OUTER_SIZE - CELL_INNER_SIZE) / 2;
     private int GRID_SIZE = CELL_OUTER_SIZE * 6;
-    private String FONT_NAME = "Verdana";
+    private String CLUE_FONT_NAME = "Arial Bold";
+    private String FONT_NAME = "Arial";
     private int FONT_SIZE_SMALL = 12+6;
     private int FONT_SIZE_BIG = 36+12;
     private int FONT_SIZE_LEGEND = 24;
@@ -83,7 +84,7 @@ public class SudokuPanel extends JPanel {
             rescale();
         initialize();
         super.setOpaque(false);
-        smallFont = new Font(FONT_NAME, Font.PLAIN, FONT_SIZE_SMALL);
+        smallFont = new Font(CLUE_FONT_NAME, Font.PLAIN, FONT_SIZE_SMALL);
         bigFont = new Font(FONT_NAME, Font.PLAIN, FONT_SIZE_BIG);
         legendFont = new Font(FONT_NAME, Font.PLAIN, FONT_SIZE_LEGEND);
     }
@@ -279,7 +280,7 @@ public class SudokuPanel extends JPanel {
         // Get candidate
         int px = (x - CELL_PAD) / (CELL_INNER_SIZE / 3);
         int py = (y - CELL_PAD) / (CELL_INNER_SIZE / 3);
-        if (px < 0 || px >= 3 || py < 0 || py >= 3)
+        if (px < 0 || px >= 3 || py < 0 || py >= 2)
             return 0;
         return py * 3 + px + 1;
     }
@@ -695,18 +696,20 @@ public class SudokuPanel extends JPanel {
 
     private void paintGrid(Graphics g) {
         for (int i = 0; i <= 6; i++) {
-            int lineWidth;
-            if (i % 6 == 0 || (i % 3 == 0  && !grid.isLatinSquare())) {
+            int lineWidth, offset;
+            if (i % 6 == 0 || ( grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())
+                           || (!grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())) {
                 lineWidth = 4;
                 g.setColor(Color.black);
             } else {
                 lineWidth = 2;
                 g.setColor(Color.blue.darker());
             }
-            int offset = lineWidth / 2;
+            offset = lineWidth / 2;
             // vertical lines
             g.fillRect(i * CELL_OUTER_SIZE - offset, 0 - offset, lineWidth, GRID_SIZE + lineWidth);
-            if (i % 6 == 0 || (i % 2 == 0  && !grid.isLatinSquare())) {
+            if (i % 6 == 0 || ( grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())
+                           || (!grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())) {
                 lineWidth = 4;
                 g.setColor(Color.black);
             } else {
@@ -726,18 +729,20 @@ public class SudokuPanel extends JPanel {
 
     private void paint2Grid(Graphics g, int adj) {
         for (int i = 0; i <= 6; i++) {
-            int lineWidth;
-            if (i % 6 == 0 || (i % 3 == 0  && !grid.isLatinSquare())) {
+            int lineWidth, offset;
+            if (i % 6 == 0 || ( grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())
+                           || (!grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())) {
                 lineWidth = 4;
                 g.setColor(Color.black);
             } else {
                 lineWidth = 2;
                 g.setColor(Color.blue.darker());
             }
-            int offset = lineWidth / 2;
+            offset = lineWidth / 2;
             // vertical lines
             g.fillRect(i * CELL_OUTER_SIZE - offset+adj, 0 - offset+adj, lineWidth, GRID_SIZE + lineWidth);
-            if (i % 6 == 0 || (i % 2 == 0  && !grid.isLatinSquare())) {
+            if (i % 6 == 0 || ( grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())
+                           || (!grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())) {
                 lineWidth = 4;
                 g.setColor(Color.black);
             } else {
@@ -767,22 +772,29 @@ public class SudokuPanel extends JPanel {
                         if (region instanceof Grid.Row || region instanceof Grid.Column || region instanceof Grid.Block) {
                             if (region instanceof Grid.Row) {
                                 Grid.Row row = (Grid.Row)region;
-                                y = row.getRowNum();
-                                h = 1;
                                 x = 0;
+                                y = row.getRowNum();
                                 w = 6;
+                                h = 1;
                             } else if (region instanceof Grid.Column) {
                                 Grid.Column column = (Grid.Column)region;
                                 x = column.getColumnNum();
-                                w = 1;
                                 y = 0;
+                                w = 1;
                                 h = 6;
                             } else {
                                 Grid.Block square = (Grid.Block)region;
+                              if ( grid.isRC23() ) {
                                 x = square.getHIndex() * 3;
                                 y = square.getVIndex() * 2;
                                 w = 3;
                                 h = 2;
+                              } else {
+                                x = square.getHIndex() * 2;
+                                y = square.getVIndex() * 3;
+                                w = 2;
+                                h = 3;
+                              }
                             }
                             g.setColor(colors[index % 2]);
                             for (int s = -2 + rev; s <= 2; s+= 2) {
@@ -835,22 +847,29 @@ public class SudokuPanel extends JPanel {
                         if (region instanceof Grid.Row || region instanceof Grid.Column || region instanceof Grid.Block) {
                             if (region instanceof Grid.Row) {
                                 Grid.Row row = (Grid.Row)region;
-                                y = row.getRowNum();
-                                h = 1;
                                 x = 0;
+                                y = row.getRowNum();
                                 w = 6;
+                                h = 1;
                             } else if (region instanceof Grid.Column) {
                                 Grid.Column column = (Grid.Column)region;
                                 x = column.getColumnNum();
-                                w = 1;
                                 y = 0;
+                                w = 1;
                                 h = 6;
                             } else {
                                 Grid.Block square = (Grid.Block)region;
+                              if ( grid.isRC23() ) {
                                 x = square.getHIndex() * 3;
                                 y = square.getVIndex() * 2;
                                 w = 3;
                                 h = 2;
+                              } else {
+                                x = square.getHIndex() * 2;
+                                y = square.getVIndex() * 3;
+                                w = 2;
+                                h = 3;
+                              }
                             }
                             g.setColor(colors[index % 2]);
                             for (int s = -2 + rev; s <= 2; s+= 2) {
@@ -894,6 +913,7 @@ public class SudokuPanel extends JPanel {
     private void paintCellsPotentials(Graphics g) {
         Rectangle clip = g.getClipBounds();
         Rectangle cellRect = new Rectangle();
+        boolean paintIt = Settings.getInstance().isShowingCandidates();
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                 readCellRectangle(x, y, cellRect);
@@ -903,7 +923,6 @@ public class SudokuPanel extends JPanel {
                     int index = 0;
                     g.setFont(smallFont);
                     for (int value = 1; value <= 6; value++) {
-                        boolean paintIt = Settings.getInstance().isShowingCandidates();
                         if (cell == this.selectedCell && value == this.focusedCandidate) {
                             // Paint magenta selection
                             g.setColor(Color.magenta);

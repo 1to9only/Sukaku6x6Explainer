@@ -120,6 +120,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JLabel lblEnabledTechniques = null;
 
     private JMenu VariantsMenu = null;
+    private JCheckBoxMenuItem mitRC23 = null;
     private JCheckBoxMenuItem mitLatinSquare = null;
     private JCheckBoxMenuItem mitDiagonals = null;
 
@@ -326,7 +327,7 @@ public class SudokuFrame extends JFrame implements Asker {
     }
 
     private void initialize() {
-        this.setTitle("Sukaku 6(2Rx3C) Explainer " + VERSION + "." + REVISION + SUBREV);
+        this.setTitle("Sukaku 6 (2Rx3C and 3Rx2C) Explainer " + VERSION + "." + REVISION + SUBREV);
         JMenuBar menuBar = getJJMenuBar();
         setupLookAndFeelMenu();
         this.setJMenuBar(menuBar);
@@ -911,13 +912,28 @@ public class SudokuFrame extends JFrame implements Asker {
                     if (generateDialog == null || !generateDialog.isVisible()) {
                         generateDialog = new GenerateDialog(SudokuFrame.this, engine);
                         generateDialog.pack();
-                        centerDialog(generateDialog);
+                        offsetDialog(generateDialog);
                     }
                     generateDialog.setVisible(true);
                 }
             });
         }
         return mitGenerate;
+    }
+
+    private void offsetDialog(JDialog dlg) {
+        Point frameLocation = SudokuFrame.this.getLocation();
+        Dimension frameSize = SudokuFrame.this.getSize();
+        Dimension windowSize = dlg.getSize();
+      if ( Settings.getInstance().isBigCell() ) {
+        dlg.setLocation(
+                frameLocation.x + (frameSize.width * 3) / 5,
+                frameLocation.y + (frameSize.height - windowSize.height) / 3);
+      } else {
+        dlg.setLocation(
+                frameLocation.x + (frameSize.width    ) / 2,
+                frameLocation.y + (frameSize.height - windowSize.height) / 3);
+      }
     }
 
     private void centerDialog(JDialog dlg) {
@@ -1845,11 +1861,33 @@ public class SudokuFrame extends JFrame implements Asker {
             VariantsMenu = new JMenu();
             VariantsMenu.setText("Variants");
             VariantsMenu.setMnemonic(java.awt.event.KeyEvent.VK_V);
+            VariantsMenu.add(getMitRC23());
+            VariantsMenu.addSeparator();
             VariantsMenu.add(getMitLatinSquare());
             VariantsMenu.addSeparator();
             VariantsMenu.add(getMitDiagonals());
         }
         return VariantsMenu;
+    }
+
+    private JCheckBoxMenuItem getMitRC23() {
+        if (mitRC23 == null) {
+            mitRC23 = new JCheckBoxMenuItem();
+            mitRC23.setText("is 2Rx3C (else 3Rx2C)");
+            mitRC23.setToolTipText("Sets the block size to 2Rx3C or 3Rx2C");
+            mitRC23.setSelected(Settings.getInstance().isRC23());
+            mitRC23.addItemListener(new java.awt.event.ItemListener() {
+                public void itemStateChanged(java.awt.event.ItemEvent e) {
+                    Settings.getInstance().setRC23(mitRC23.isSelected());
+                    Settings.getInstance().saveChanged();
+                    sudokuPanel.getSudokuGrid().updateRC23();
+                    engine.rebuildSolver();
+                    engine.resetPotentials();
+                    repaint();
+                }
+            });
+        }
+        return mitRC23;
     }
 
     private JCheckBoxMenuItem getMitLatinSquare() {
@@ -1858,11 +1896,21 @@ public class SudokuFrame extends JFrame implements Asker {
             mitLatinSquare.setText("Latin Square");
             mitLatinSquare.setToolTipText("Sets the puzzle type to Latin Square");
             mitLatinSquare.setSelected(Settings.getInstance().isLatinSquare());
+          if ( mitLatinSquare.isSelected() ) {
+            mitRC23.setVisible(false);
+          } else {
+            mitRC23.setVisible(true);
+          }
             mitLatinSquare.addItemListener(new java.awt.event.ItemListener() {
                 public void itemStateChanged(java.awt.event.ItemEvent e) {
                     Settings.getInstance().setLatinSquare(mitLatinSquare.isSelected());
                     Settings.getInstance().saveChanged();
                     sudokuPanel.getSudokuGrid().updateLatinSquare();
+                  if ( mitLatinSquare.isSelected() ) {
+                    mitRC23.setVisible(false);
+                  } else {
+                    mitRC23.setVisible(true);
+                  }
                     engine.rebuildSolver();
                     engine.resetPotentials();
                     repaint();

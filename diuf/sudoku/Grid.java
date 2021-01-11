@@ -35,6 +35,7 @@ public class Grid {
     private Diagonal[] diagonal = new Diagonal[1];
     private AntiDiagonal[] antidiagonal = new AntiDiagonal[1];
 
+    private boolean isRC23 = true;
     private boolean isLatinSquare = false;
     private boolean isDiagonals = false;
 
@@ -46,7 +47,7 @@ public class Grid {
     // AntiDiagonal
     private int[][] AntiDiagonalCells = { { 0, 7,14,21,28,35},{-1,-1,-1,-1,-1,-1},{-1,-1,-1,-1,-1,-1},{-1,-1,-1,-1,-1,-1},{-1,-1,-1,-1,-1,-1},{-1,-1,-1,-1,-1,-1}};
     private int[][] AntiDiagonalAt = { { 0,-1,-1,-1,-1,-1},{-1, 0,-1,-1,-1,-1},{-1,-1, 0,-1,-1,-1},{-1,-1,-1, 0,-1,-1},{-1,-1,-1,-1, 0,-1},{-1,-1,-1,-1,-1, 0}};
-    private int[][] AntiDiagonalIndexOf = { { 0,-1,-1,-1,-1,-1,},{-1, 1,-1,-1,-1,-1,},{-1,-1, 2,-1,-1,-1,},{-1,-1,-1, 3,-1,-1,},{-1,-1,-1,-1, 4,-1,},{-1,-1,-1,-1,-1, 5,}};
+    private int[][] AntiDiagonalIndexOf = { { 0,-1,-1,-1,-1,-1},{-1, 1,-1,-1,-1,-1},{-1,-1, 2,-1,-1,-1},{-1,-1,-1, 3,-1,-1},{-1,-1,-1,-1, 4,-1},{-1,-1,-1,-1,-1, 5}};
 
     /**
      * Create a new 6x6 Sudoku grid. All cells are set to empty
@@ -57,11 +58,16 @@ public class Grid {
                 cells[y][x] = new Cell(this, x, y);
             }
         }
+        isRC23 = Settings.getInstance().isRC23();
         // Build subparts views
         for (int i = 0; i < 6; i++) {
             rows[i] = new Row(i);
             columns[i] = new Column(i);
-            blocks[i] = new Block(i / 2, i % 2); // verified
+          if ( isRC23 ) {
+            blocks[i] = new Block(i / 2, i % 2); // 2Rx3C
+          } else {
+            blocks[i] = new Block(i / 3, i % 3); // 3Rx2C
+          }
         }
         diagonal[0] = new Diagonal(0);
         antidiagonal[0] = new AntiDiagonal(0);
@@ -79,6 +85,21 @@ public class Grid {
         this.isSudoku = 0;
     }
 
+    public boolean isRC23() { return this.isRC23; }
+    public void setRC23() { this.isRC23 = true; }
+    public void setRC23(boolean b) { this.isRC23 = b; }
+    public void updateRC23() { this.isRC23 = Settings.getInstance().isRC23(); reset_blocks(); }
+
+    private void reset_blocks() {
+        for (int i = 0; i < 6; i++) {
+          if ( isRC23 ) {
+            blocks[i] = new Block(i / 2, i % 2); // 2Rx3C
+          } else {
+            blocks[i] = new Block(i / 3, i % 3); // 3Rx2C
+          }
+        }
+    }
+
     public boolean isLatinSquare() { return this.isLatinSquare; }
     public void setLatinSquare() { this.isLatinSquare = true; }
     public void setLatinSquare(boolean b) { this.isLatinSquare = b; }
@@ -88,6 +109,17 @@ public class Grid {
     public void setDiagonals() { this.isDiagonals = true; }
     public void setDiagonals(boolean b) { this.isDiagonals = b; }
     public void updateDiagonals() { this.isDiagonals = Settings.getInstance().isDiagonals(); reset_regionTypes(); }
+
+    public void fixGivens() {
+        for (int i = 0; i < 36; i++) {
+            if ( getCellValue(i%6,i/6) != 0 ) {
+                getCell(i%6,i/6).setGiven();
+            }
+            else {
+                getCell(i%6,i/6).resetGiven();
+            }
+        }
+    }
 
     /**
      * Get the cell at the given coordinates
@@ -178,7 +210,11 @@ public class Grid {
      * @return the block at the given location
      */
     public Block getBlock(int vPos, int hPos) {
-        return this.blocks[vPos * 2 + hPos]; // verified
+      if ( isRC23 ) {
+        return this.blocks[vPos * 2 + hPos]; // 2Rx3C
+      } else {
+        return this.blocks[vPos * 3 + hPos]; // 3Rx2C
+      }
     }
 
     /**
@@ -262,7 +298,11 @@ public class Grid {
      * are coordinates of a cell)
      */
     public Block getBlockAt(int x, int y) {
-        return this.blocks[(y / 2) * 2 + (x / 3)]; // verified
+      if ( isRC23 ) {
+        return this.blocks[(y / 2) * 2 + (x / 3)]; // 2Rx3C
+      } else {
+        return this.blocks[(y / 3) * 3 + (x / 2)]; // 3Rx2C
+      }
     }
 
     /**
@@ -543,8 +583,13 @@ public class Grid {
         @Override
         public boolean crosses(Region other) {
             if (other instanceof Block) {
+              if ( isRC23 ) {
                 Block square = (Block)other;
                 return rowNum / 2 == square.vNum;
+              } else {
+                Block square = (Block)other;
+                return rowNum / 3 == square.vNum;
+              }
             } else if (other instanceof Column) {
                 return true;
             } else if (other instanceof Row) {
@@ -599,8 +644,13 @@ public class Grid {
         @Override
         public boolean crosses(Region other) {
             if (other instanceof Block) {
+              if ( isRC23 ) {
                 Block square = (Block)other;
                 return columnNum / 3 == square.hNum;
+              } else {
+                Block square = (Block)other;
+                return columnNum / 2 == square.hNum;
+              }
             } else if (other instanceof Row) {
                 return true;
             } else if (other instanceof Column) {
@@ -649,12 +699,20 @@ public class Grid {
 
         @Override
         public Cell getCell(int index) {
-            return cells[vNum * 2 + index / 3][hNum * 3 + index % 3]; // verified
+          if ( isRC23 ) {
+            return cells[vNum * 2 + index / 3][hNum * 3 + index % 3]; // 2Rx3C
+          } else {
+            return cells[vNum * 3 + index / 2][hNum * 2 + index % 2]; // 3Rx2C
+          }
         }
 
         @Override
         public int indexOf(Cell cell) {
-            return (cell.getY() % 2) * 3 + (cell.getX() % 3); // verified
+          if ( isRC23 ) {
+            return (cell.getY() % 2) * 3 + (cell.getX() % 3); // 2Rx3C
+          } else {
+            return (cell.getY() % 3) * 2 + (cell.getX() % 2); // 3Rx2C
+          }
         }
 
         @Override
@@ -678,7 +736,11 @@ public class Grid {
 
         @Override
         public String toFullString() {
-            return toString() + " " + (vNum * 2 + hNum + 1); // verified
+          if ( isRC23 ) {
+            return toString() + " " + (vNum * 2 + hNum + 1); // 2Rx3C
+          } else {
+            return toString() + " " + (vNum * 3 + hNum + 1); // 3Rx2C
+          }
         }
 
     }

@@ -1,5 +1,8 @@
 Changes:
 
+20210111
+- add 3Rx2C, and a few improvements
+
 20201124:
 - small visual change
 

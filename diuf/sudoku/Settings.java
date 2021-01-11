@@ -63,6 +63,7 @@ public class Settings {
 
     private boolean isExact = false;
 
+    private boolean isRC23 = true;                  // 2Rx3C or 3Rx2C
     private boolean isLatinSquare = false;          // variants
     private boolean isDiagonals = false;
 
@@ -88,13 +89,16 @@ public class Settings {
     public void setNoSaves() {      // call from command line utils, no saves done
         noSaves = true;
         init();                     // enable all solving techniques
+        isRC23 = true;              // 2Rx3C or 3Rx2C
         isLatinSquare = false;      // reset variants, i.e. set to vanilla sudoku
         isDiagonals = false;
     }
 
     public void setRCNotation(boolean isRCNotation) {
+      if ( this.isRCNotation != isRCNotation ) {
         this.isRCNotation = isRCNotation;
         save();
+      }
     }
 
     public boolean isRCNotation() {
@@ -102,8 +106,10 @@ public class Settings {
     }
 
     public void setAntialiasing(boolean isAntialiasing) {
+      if ( this.isAntialiasing != isAntialiasing ) {
         this.isAntialiasing = isAntialiasing;
         save();
+      }
     }
 
     public boolean isAntialiasing() {
@@ -111,8 +117,10 @@ public class Settings {
     }
 
     public void setShowingCandidates(boolean value) {
+      if ( this.isShowingCandidates != value ) {
         this.isShowingCandidates = value;
         save();
+      }
     }
 
     public boolean isShowingCandidates() {
@@ -120,8 +128,10 @@ public class Settings {
     }
 
     public void setShowingCandidateMasks(boolean value) {
+      if ( this.isShowingCandidateMasks != value ) {
         this.isShowingCandidateMasks = value;
         save();
+      }
     }
 
     public boolean isShowingCandidateMasks() {
@@ -133,8 +143,10 @@ public class Settings {
     }
 
     public void setLookAndFeelClassName(String lookAndFeelClassName) {
+      if ( !(this.lookAndFeelClassName.equals(lookAndFeelClassName)) ) {
         this.lookAndFeelClassName = lookAndFeelClassName;
         save();
+      }
     }
 
     public boolean isAlphabet() {
@@ -142,8 +154,10 @@ public class Settings {
     }
 
     public void setBigCell(boolean isBigCell) {
+      if ( this.isBigCell != isBigCell ) {
         this.isBigCell = isBigCell;
         save();
+      }
     }
 
     public boolean isBigCell() {
@@ -221,128 +235,160 @@ public class Settings {
     // generate dialog
 
     public void setVertical(boolean isVertical) {
+      if ( this.isVertical != isVertical ) {
         this.isVertical = isVertical;
         save();
+      }
     }
     public boolean isVertical() {
         return isVertical;
     }
 
     public void setHorizontal(boolean isHorizontal) {
+      if ( this.isHorizontal != isHorizontal ) {
         this.isHorizontal = isHorizontal;
         save();
+      }
     }
     public boolean isHorizontal() {
         return isHorizontal;
     }
 
     public void setDiagonal(boolean isDiagonal) {
+      if ( this.isDiagonal != isDiagonal ) {
         this.isDiagonal = isDiagonal;
         save();
+      }
     }
     public boolean isDiagonal() {
         return isDiagonal;
     }
 
     public void setAntiDiagonal(boolean isAntiDiagonal) {
+      if ( this.isAntiDiagonal != isAntiDiagonal ) {
         this.isAntiDiagonal = isAntiDiagonal;
         save();
+      }
     }
     public boolean isAntiDiagonal() {
         return isAntiDiagonal;
     }
 
     public void setBiDiagonal(boolean isBiDiagonal) {
+      if ( this.isBiDiagonal != isBiDiagonal ) {
         this.isBiDiagonal = isBiDiagonal;
         save();
+      }
     }
     public boolean isBiDiagonal() {
         return isBiDiagonal;
     }
 
     public void setOrthogonal(boolean isOrthogonal) {
+      if ( this.isOrthogonal != isOrthogonal ) {
         this.isOrthogonal = isOrthogonal;
         save();
+      }
     }
     public boolean isOrthogonal() {
         return isOrthogonal;
     }
 
     public void setRotational180(boolean isRotational180) {
+      if ( this.isRotational180 != isRotational180 ) {
         this.isRotational180 = isRotational180;
         save();
+      }
     }
     public boolean isRotational180() {
         return isRotational180;
     }
 
     public void setRotational90(boolean isRotational90) {
+      if ( this.isRotational90 != isRotational90 ) {
         this.isRotational90 = isRotational90;
         save();
+      }
     }
     public boolean isRotational90() {
         return isRotational90;
     }
 
     public void setNone(boolean isNone) {
+      if ( this.isNone != isNone ) {
         this.isNone = isNone;
         save();
+      }
     }
     public boolean isNone() {
         return isNone;
     }
 
     public void setFull(boolean isFull) {
+      if ( this.isFull != isFull ) {
         this.isFull = isFull;
         save();
+      }
     }
     public boolean isFull() {
         return isFull;
     }
 
     public void setEasy(boolean isEasy) {
+      if ( this.isEasy != isEasy ) {
         this.isEasy = isEasy;
         isChanged = 1;
+      }
     }
     public boolean isEasy() {
         return isEasy;
     }
 
     public void setMedium(boolean isMedium) {
+      if ( this.isMedium != isMedium ) {
         this.isMedium = isMedium;
         isChanged = 1;
+      }
     }
     public boolean isMedium() {
         return isMedium;
     }
 
     public void setHard(boolean isHard) {
+      if ( this.isHard != isHard ) {
         this.isHard = isHard;
         isChanged = 1;
+      }
     }
     public boolean isHard() {
         return isHard;
     }
 
     public void setFiendish(boolean isFiendish) {
+      if ( this.isFiendish != isFiendish ) {
         this.isFiendish = isFiendish;
         isChanged = 1;
+      }
     }
     public boolean isFiendish() {
         return isFiendish;
     }
 
     public void setDiabolical(boolean isDiabolical) {
+      if ( this.isDiabolical != isDiabolical ) {
         this.isDiabolical = isDiabolical;
         isChanged = 1;
+      }
     }
     public boolean isDiabolical() {
         return isDiabolical;
     }
 
     public void setExact(boolean isExact) {
+      if ( this.isExact != isExact ) {
         this.isExact = isExact;
         save();
+      }
     }
     public boolean isExact() {
         return isExact;
@@ -350,17 +396,31 @@ public class Settings {
 
     // variants
 
+    public void setRC23(boolean isRC23) {
+      if ( this.isRC23 != isRC23 ) {
+        this.isRC23 = isRC23;
+        isChanged = 1;
+      }
+    }
+    public boolean isRC23() {
+        return isRC23;
+    }
+
     public void setLatinSquare(boolean isLatinSquare) {
+      if ( this.isLatinSquare != isLatinSquare ) {
         this.isLatinSquare = isLatinSquare;
         isChanged = 1;
+      }
     }
     public boolean isLatinSquare() {
         return isLatinSquare;
     }
 
     public void setDiagonals(boolean isDiagonals) {
+      if ( this.isDiagonals != isDiagonals ) {
         this.isDiagonals = isDiagonals;
         isChanged = 1;
+      }
     }
     public boolean isDiagonals() {
         return isDiagonals;
@@ -498,6 +558,11 @@ public class Settings {
                 // variants
 
                 try {
+                    s = (String)stgDetails.get("isRC23");
+                    isRC23 = s.equals("true")?true:false;
+                }
+                catch (NullPointerException e) { LoadError = 1; }
+                try {
                     s = (String)stgDetails.get("isLatinSquare");
                     isLatinSquare = s.equals("true")?true:false;
                 }
@@ -580,6 +645,7 @@ public class Settings {
 
         // variants
 
+        stgDetails.put("isRC23", isRC23?"true":"false");
         stgDetails.put("isLatinSquare", isLatinSquare?"true":"false");
         stgDetails.put("isDiagonals", isDiagonals?"true":"false");
 
@@ -598,6 +664,10 @@ public class Settings {
         try (FileWriter file = new FileWriter(jsonFilename)) {
             file.write(jSettings.toJSONString());
             file.flush();
+
+            if ( isChanged == 1 ) {
+                isChanged = 0;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

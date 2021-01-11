@@ -41,7 +41,7 @@ public class AboutDialog extends JDialog {
         this.setSize(new java.awt.Dimension(315,203));
         this.setResizable(false);
         this.setContentPane(getJContentPane());
-        this.setTitle("Sukaku 6(2Rx3C) Explainer - About");
+        this.setTitle("Sukaku 6 (2Rx3C and 3Rx2C) Explainer - About");
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowDeactivated(java.awt.event.WindowEvent e) {
@@ -69,7 +69,7 @@ public class AboutDialog extends JDialog {
             lblCopyright.setText("(C) 2005-2007 Nicolas Juillerat, (C) 2019-2020 1to9only");
             lblCopyright.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             lblTitle = new JLabel();
-            lblTitle.setText("Sukaku 6(2Rx3C) Explainer");
+            lblTitle.setText("Sukaku 6 (2Rx3C and 3Rx2C) Explainer");
             lblTitle.setFont(new java.awt.Font("Comic Sans MS", java.awt.Font.BOLD, 16));
             lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             lblTitle.setHorizontalTextPosition(javax.swing.SwingConstants.TRAILING);

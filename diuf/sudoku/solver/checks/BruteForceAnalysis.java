@@ -60,7 +60,7 @@ public class BruteForceAnalysis implements WarningHintProducer {
                     message = new WarningMessage(this, "The Sudoku has no solution",
                     "NoSolution.html");
                 else
-                    message = new WarningMessage(this, "The Sudoku has no solution",
+                    message = new WarningMessage(this, "The Sudoku is not valid",
                     "MissingCandidates.html");
             }
             accu.add(message);
@@ -158,7 +158,7 @@ public class BruteForceAnalysis implements WarningHintProducer {
         Hint hint = null;
         do {
             if (hint != null)
-                hint.apply();
+                hint.apply(grid);
             SingleHintAccumulator accu = new SingleHintAccumulator();
             try {
                 nakedSingle.getHints(grid, accu);
@@ -232,7 +232,7 @@ public class BruteForceAnalysis implements WarningHintProducer {
         Hint hint = null;
         do {
             if (hint != null)
-                hint.apply();
+                hint.apply(grid);
             SingleHintAccumulator accu = new SingleHintAccumulator();
             try {
                 nakedSingle.getHints(grid, accu);

@@ -514,7 +514,7 @@ public class SudokuExplainer {
             Rule rule = (Rule)hint;
             String rulename = rule.getName();
             if ( rulename.equals("Hidden Single") || rulename.equals("Naked Single") ) {
-                pushGrid(); hint.apply();
+                pushGrid(); hint.apply(grid);
             }
             else { basics = 0; }
           } catch (Exception e) {
@@ -602,7 +602,7 @@ public class SudokuExplainer {
       if ( selectedHints.size() >= 1 ) {
         pushGrid();
         for (Hint hint : selectedHints)
-            hint.apply();
+            hint.apply(grid);
         clearHints();
         repaintAll();
         if ( solver.isSolved() ) {

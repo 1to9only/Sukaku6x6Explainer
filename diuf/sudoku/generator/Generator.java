@@ -65,9 +65,10 @@ public class Generator {
             int p = w % 10; w /= 10;
             System.err.println("ED=" + w + "." + p);
             System.err.flush();
-            if (difficulty >= minDifficulty && difficulty <= maxDifficulty)
+            if (difficulty >= minDifficulty && difficulty <= maxDifficulty) {
+                grid.fixGivens();
                 return grid;
-
+            }
             if (isInterrupted) {
                 System.err.println("Stopped.");
                 System.err.flush();
@@ -139,7 +140,7 @@ public class Generator {
                         // Cells successfully removed: still a unique solution
                         isSuccess = true;
                         successes += 1;
-                    } else if (state == 0) {
+//                  } else if (state == 0) {
 //a                     assert false : "Invalid grid";
                     } else {
                         // Failed. Put the cells back and try with next cell

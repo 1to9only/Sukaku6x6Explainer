@@ -60,7 +60,7 @@ public class SolutionHint extends WarningHint {
     }
 
     @Override
-    public void apply() {
+    public void apply(Grid grid) {
         solution.copyTo(grid);
     }
 
