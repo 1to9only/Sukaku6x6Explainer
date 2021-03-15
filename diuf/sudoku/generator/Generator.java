@@ -160,19 +160,14 @@ public class Generator {
         for (int i = 0; i < 36; i++) {
             int n = grid.getCellValue(i % 6, i / 6);
             if ( n != 0 ) { cnt++; }
-            if (isInterrupted) {
-            }
         }
         if ( cnt < 10 ) { s += " "; }
         s += " " + cnt + " ";
       if (!isInterrupted) {
         s = s + "got new sudoku";
       }
-      if ( s.length() != 0 ) {
         System.err.println(s);
         System.err.flush();
-      }
-
         return grid;
     }
 

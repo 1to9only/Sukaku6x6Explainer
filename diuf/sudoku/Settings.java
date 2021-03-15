@@ -48,12 +48,12 @@ public class Settings {
     private boolean isHorizontal = false;
     private boolean isDiagonal = false;
     private boolean isAntiDiagonal = false;
-    private boolean isBiDiagonal = false;
-    private boolean isOrthogonal = false;
-    private boolean isRotational180 = false;
-    private boolean isRotational90 = false;
+    private boolean isBiDiagonal = true;
+    private boolean isOrthogonal = true;
+    private boolean isRotational180 = true;
+    private boolean isRotational90 = true;
     private boolean isNone = true;
-    private boolean isFull = false;
+    private boolean isFull = true;
 
     private boolean isEasy = false;
     private boolean isMedium = false;

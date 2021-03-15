@@ -31,16 +31,16 @@ public class SudokuPanel extends JPanel {
 
     private static final long serialVersionUID = 3709127163156966626L;
 
-    private int CELL_OUTER_SIZE = 45+21;
-    private int CELL_INNER_SIZE = 39+21;
+    private int CELL_OUTER_SIZE = 45;
+    private int CELL_INNER_SIZE = 39;
     private int GRID_GAP_SIZE = 2;
     private int LEGEND_GAP_SIZE = 42;
     private int CELL_PAD = (CELL_OUTER_SIZE - CELL_INNER_SIZE) / 2;
     private int GRID_SIZE = CELL_OUTER_SIZE * 6;
     private String CLUE_FONT_NAME = "Arial Bold";
     private String FONT_NAME = "Arial";
-    private int FONT_SIZE_SMALL = 12+6;
-    private int FONT_SIZE_BIG = 36+12;
+    private int FONT_SIZE_SMALL = 12;
+    private int FONT_SIZE_BIG = 36;
     private int FONT_SIZE_LEGEND = 24;
 
     private Grid grid;
@@ -72,13 +72,13 @@ public class SudokuPanel extends JPanel {
     public SudokuPanel(SudokuFrame parent) {
         super();
         this.parent = parent;
-      if ( !Settings.getInstance().isBigCell() ) {
-        CELL_OUTER_SIZE = 45;
-        CELL_INNER_SIZE = 39;
+      if ( Settings.getInstance().isBigCell() ) {
+        CELL_OUTER_SIZE = 45+21;
+        CELL_INNER_SIZE = 39+21;
         CELL_PAD = (CELL_OUTER_SIZE - CELL_INNER_SIZE) / 2;
         GRID_SIZE = CELL_OUTER_SIZE * 6;
-        FONT_SIZE_SMALL = 12;
-        FONT_SIZE_BIG = 36;
+        FONT_SIZE_SMALL = 12+6;
+        FONT_SIZE_BIG = 36+12;
       }
         if (getToolkit().getScreenSize().height < 750)
             rescale();
@@ -648,7 +648,7 @@ public class SudokuPanel extends JPanel {
 
     private void paintLegend(Graphics g) {
         g.setFont(legendFont);
-        g.setColor(new Color(0, 32, 64));
+        g.setColor(Color.gray);
         Settings settings = Settings.getInstance();
         for (int i = 0; i < 6; i++) {
             String xLegend;
