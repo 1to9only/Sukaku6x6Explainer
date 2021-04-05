@@ -336,6 +336,9 @@ public class BruteForceAnalysis implements WarningHintProducer {
         if ( generator.isButtonStopped() ) {
             return false;
         }
+        if (!result) {
+            return false;
+        }
         String s = ""; int cnt = 0;
         for (int i = 0; i < 36; i++) {
             int n = grid.getCellValue(i % 6, i / 6);

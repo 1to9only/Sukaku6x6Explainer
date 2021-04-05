@@ -153,10 +153,10 @@ public class Grid {
     }
 
     /**
-     * Get the 9 regions of the given type
+     * Get the 6 regions of the given type
      * @param regionType the type of the regions to return. Must be one of
      * {@link Grid.Block}, {@link Grid.Row} or {@link Grid.Column}.
-     * @return the 9 regions of the given type
+     * @return the 6 regions of the given type
      */
     public int getRegionMax(Class<? extends Region> regionType) {
         if (regionType == Row.class)
@@ -356,6 +356,25 @@ public class Grid {
 
     public Grid.Region getRegionAt(Class<? extends Grid.Region> regionType, Cell cell) {
         return getRegionAt(regionType, cell.getX(), cell.getY());
+    }
+
+    public int getRegionNum(Class<? extends Grid.Region> regionType, int x, int y) {
+        if (regionType.equals(Grid.Row.class))
+            return getRowAt(x, y).getRowNum();
+        else if (regionType.equals(Grid.Column.class))
+            return getColumnAt(x, y).getColumnNum();
+        else if (regionType.equals(Grid.Block.class))
+            return getBlockAt(x, y).getBlockNum();
+        else if (regionType.equals(Grid.Diagonal.class))
+            return getDiagonalAt(x, y).getDiagonalNum();
+        else if (regionType.equals(Grid.AntiDiagonal.class))
+            return getAntiDiagonalAt(x, y).getAntiDiagonalNum();
+        else
+            return -1;
+    }
+
+    public int getRegionNum(Class<? extends Grid.Region> regionType, Cell cell) {
+        return getRegionNum(regionType, cell.getX(), cell.getY());
     }
 
     private List<Class<? extends Grid.Region>> _regionTypes = null;
@@ -668,6 +687,14 @@ public class Grid {
 
         public int getHIndex() {
             return this.hNum;
+        }
+
+        public int getBlockNum() {
+          if ( isRC23 ) {
+            return this.vNum * 2 + this.hNum;
+          } else {
+            return this.vNum * 3 + this.hNum;
+          }
         }
 
         @Override

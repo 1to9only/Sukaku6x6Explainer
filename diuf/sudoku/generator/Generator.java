@@ -42,6 +42,11 @@ public class Generator {
             Symmetry symmetry = symmetries.get(symmetryIndex);
             symmetryIndex = (symmetryIndex + 1) % symmetries.size();
             Grid grid = generate(random, symmetry);
+            if ( grid == null ) {
+                System.err.println("Failed.");
+                System.err.flush();
+                return null;
+            }
 
             if (isInterrupted) {
                 System.err.println("Stopped.");
@@ -88,6 +93,9 @@ public class Generator {
         // Build the solution
         Grid grid = new Grid();
         boolean result = analyser.solveRandom(this, grid, rnd);
+        if ( !result ) {
+            return null;
+        }
         if (isInterrupted) {
             return null;
         }

@@ -89,6 +89,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JMenu toolMenu = null;
     private JMenuItem mitCheckValidity = null;
     private JMenuItem mitAnalyse = null;
+    private JCheckBoxMenuItem mitAnalyseClipboard = null;
     private JMenuItem mitSolveStep = null;
     private JMenuItem mitGetNextHint = null;
     private JMenuItem mitApplyHint = null;
@@ -327,7 +328,7 @@ public class SudokuFrame extends JFrame implements Asker {
     }
 
     private void initialize() {
-        this.setTitle("Sukaku 6 (2Rx3C and 3Rx2C) Explainer " + VERSION + "." + REVISION + SUBREV);
+        this.setTitle("Sukaku 6 (2Rx3C and 3Rx2C) Explainer " + VERSION + "." + REVISION + "." + SUBREV);
         JMenuBar menuBar = getJJMenuBar();
         setupLookAndFeelMenu();
         this.setJMenuBar(menuBar);
@@ -1410,6 +1411,7 @@ public class SudokuFrame extends JFrame implements Asker {
             getMitSolve().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0));
             toolMenu.add(getMitAnalyse());
             getMitAnalyse().setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
+            toolMenu.add(getMitAnalyseClipboard());
         }
         return toolMenu;
     }
@@ -1584,7 +1586,7 @@ public class SudokuFrame extends JFrame implements Asker {
     private JMenuItem getMitAnalyse() {
         if (mitAnalyse == null) {
             mitAnalyse = new JMenuItem();
-            mitAnalyse.setText("Analyze (and Copy)");
+            mitAnalyse.setText("Analyze");
             mitAnalyse.setMnemonic(KeyEvent.VK_F9);
             mitAnalyse.setToolTipText("List the rules required to solve the Sudoku " +
             "and get its average difficulty");
@@ -1602,6 +1604,21 @@ public class SudokuFrame extends JFrame implements Asker {
             });
         }
         return mitAnalyse;
+    }
+
+    private JCheckBoxMenuItem getMitAnalyseClipboard() {
+        if (mitAnalyseClipboard == null) {
+            mitAnalyseClipboard = new JCheckBoxMenuItem();
+            mitAnalyseClipboard.setText("... and Copy to Clipboard");
+            mitAnalyseClipboard.setToolTipText("Copy the Analysis to the clipboard");
+            mitAnalyseClipboard.setSelected(false);
+            mitAnalyseClipboard.addItemListener(new java.awt.event.ItemListener() {
+                public void itemStateChanged(java.awt.event.ItemEvent e) {
+                    Settings.getInstance().setAnalyseToClipboard(mitAnalyseClipboard.isSelected());
+                }
+            });
+        }
+        return mitAnalyseClipboard;
     }
 
     private JMenu getOptionsMenu() {

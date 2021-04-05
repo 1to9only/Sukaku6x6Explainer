@@ -30,7 +30,7 @@ public class BivalueUniversalGrave implements IndirectHintProducer {
             Grid.Region[] regions = grid.getRegions(regionType);
             for (int i = 0; i < regions.length; i++) {
                 Grid.Region region = regions[i];
-              if ( regions != null ) {
+              if ( region != null ) {
                 for (int value = 1; value <= 6; value++) {
                     // Possible positions of a value in a region (row/column/block):
                     BitSet positions = region.getPotentialPositions(value);

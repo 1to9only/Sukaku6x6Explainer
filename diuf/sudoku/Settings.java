@@ -26,9 +26,9 @@ import javax.swing.UIManager;
  */
 public class Settings {
 
-    public final static int VERSION = 1;
-    public final static int REVISION = 2;
-    public final static String SUBREV = ".1";
+    public final static int VERSION  = 2021;
+    public final static int REVISION = 3;
+    public final static int SUBREV   = 31;
 
     private static Settings instance = null;
 
@@ -75,6 +75,9 @@ public class Settings {
 
     private String methods = null;      // techniques, 1=enabled, 0=disabled
 
+    private boolean GenerateToClipboard = false;    // true= copy generated grid to clipboard
+    private boolean AnalyseToClipboard = false;     // true= copy analysis to clipboard
+
     private Settings() {
         init();
         load();
@@ -92,6 +95,20 @@ public class Settings {
         isRC23 = true;              // 2Rx3C or 3Rx2C
         isLatinSquare = false;      // reset variants, i.e. set to vanilla sudoku
         isDiagonals = false;
+    }
+
+    public void setGenerateToClipboard(boolean b) {
+        this.GenerateToClipboard = b;
+    }
+    public boolean getGenerateToClipboard() {
+        return GenerateToClipboard;
+    }
+
+    public void setAnalyseToClipboard(boolean b) {
+        this.AnalyseToClipboard = b;
+    }
+    public boolean getAnalyseToClipboard() {
+        return AnalyseToClipboard;
     }
 
     public void setRCNotation(boolean isRCNotation) {
@@ -575,7 +592,12 @@ public class Settings {
 
                 try {
                     methods = (String)stgDetails.get("techniques");
-                    unpackmethods();
+                    if ( methods.length() == techniques.size() ) {
+                        unpackmethods();
+                    } else {
+                        methods = null;     // causes reset!
+                        LoadError = 1;      // forced update!
+                    }
                 }
                 catch (NullPointerException e) { ; }
 
