@@ -1,5 +1,9 @@
 Changes:
 
+20210921
+- hints improvements
+- built using jdk-8u301
+
 20210405
 - a few cosmetic changes
 
