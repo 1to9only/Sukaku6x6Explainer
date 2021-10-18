@@ -704,10 +704,10 @@ public class SudokuPanel extends JPanel {
             } else {
                 lineWidth = 2;
                 g.setColor(Color.blue.darker());
-            }
             offset = lineWidth / 2;
             // vertical lines
             g.fillRect(i * CELL_OUTER_SIZE - offset, 0 - offset, lineWidth, GRID_SIZE + lineWidth);
+            }
             if (i % 6 == 0 || ( grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())
                            || (!grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())) {
                 lineWidth = 4;
@@ -715,10 +715,35 @@ public class SudokuPanel extends JPanel {
             } else {
                 lineWidth = 2;
                 g.setColor(Color.blue.darker());
-            }
             offset = lineWidth / 2;
             // horizontal lines
             g.fillRect(0 - offset, i * CELL_OUTER_SIZE - offset, GRID_SIZE + lineWidth, lineWidth);
+            }
+        }
+        for (int i = 0; i <= 6; i++) {
+            int lineWidth, offset;
+            if (i % 6 == 0 || ( grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())
+                           || (!grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())) {
+                lineWidth = 4;
+                g.setColor(Color.black);
+            offset = lineWidth / 2;
+            // vertical lines
+            g.fillRect(i * CELL_OUTER_SIZE - offset, 0 - offset, lineWidth, GRID_SIZE + lineWidth);
+            } else {
+                lineWidth = 2;
+                g.setColor(Color.blue.darker());
+            }
+            if (i % 6 == 0 || ( grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())
+                           || (!grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())) {
+                lineWidth = 4;
+                g.setColor(Color.black);
+            offset = lineWidth / 2;
+            // horizontal lines
+            g.fillRect(0 - offset, i * CELL_OUTER_SIZE - offset, GRID_SIZE + lineWidth, lineWidth);
+            } else {
+                lineWidth = 2;
+                g.setColor(Color.blue.darker());
+            }
         }
         if (grid.isDiagonals()) {
             g.setColor(Color.black);
@@ -737,10 +762,10 @@ public class SudokuPanel extends JPanel {
             } else {
                 lineWidth = 2;
                 g.setColor(Color.blue.darker());
-            }
             offset = lineWidth / 2;
             // vertical lines
             g.fillRect(i * CELL_OUTER_SIZE - offset+adj, 0 - offset+adj, lineWidth, GRID_SIZE + lineWidth);
+            }
             if (i % 6 == 0 || ( grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())
                            || (!grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())) {
                 lineWidth = 4;
@@ -748,10 +773,35 @@ public class SudokuPanel extends JPanel {
             } else {
                 lineWidth = 2;
                 g.setColor(Color.blue.darker());
-            }
             offset = lineWidth / 2;
             // horizontal lines
             g.fillRect(0 - offset+adj, i * CELL_OUTER_SIZE - offset+adj, GRID_SIZE + lineWidth, lineWidth);
+            }
+        }
+        for (int i = 0; i <= 6; i++) {
+            int lineWidth, offset;
+            if (i % 6 == 0 || ( grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())
+                           || (!grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())) {
+                lineWidth = 4;
+                g.setColor(Color.black);
+            offset = lineWidth / 2;
+            // vertical lines
+            g.fillRect(i * CELL_OUTER_SIZE - offset+adj, 0 - offset+adj, lineWidth, GRID_SIZE + lineWidth);
+            } else {
+                lineWidth = 2;
+                g.setColor(Color.blue.darker());
+            }
+            if (i % 6 == 0 || ( grid.isRC23() && i % 2 == 0  && !grid.isLatinSquare())
+                           || (!grid.isRC23() && i % 3 == 0  && !grid.isLatinSquare())) {
+                lineWidth = 4;
+                g.setColor(Color.black);
+            offset = lineWidth / 2;
+            // horizontal lines
+            g.fillRect(0 - offset+adj, i * CELL_OUTER_SIZE - offset+adj, GRID_SIZE + lineWidth, lineWidth);
+            } else {
+                lineWidth = 2;
+                g.setColor(Color.blue.darker());
+            }
         }
         if (grid.isDiagonals()) {
             g.setColor(Color.black);
