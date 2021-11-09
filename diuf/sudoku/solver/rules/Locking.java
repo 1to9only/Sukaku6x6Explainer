@@ -49,12 +49,12 @@ public class Locking implements IndirectHintProducer {
 
         // generalized intersection
 
-      if ( !isDirectMode && !grid.isLatinSquare() ) {
-       if ( grid.isDiagonals() ) {
-        getHintsG(grid, Grid.Block.class, accu);
+      if ( !isDirectMode ) {
+       if ( !grid.isLatinSquare() ) {
+        getHintsG(grid, Grid.Block.class, accu); }
         getHintsG(grid, Grid.Column.class, accu);
         getHintsG(grid, Grid.Row.class, accu);
-
+       if ( grid.isDiagonals() ) {
         getHintsG(grid, Grid.Diagonal.class, accu);
         getHintsG(grid, Grid.AntiDiagonal.class, accu);
        }
