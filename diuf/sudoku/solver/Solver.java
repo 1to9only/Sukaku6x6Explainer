@@ -635,18 +635,25 @@ public class Solver {
                 int w = (int)((ruleDiff + 0.05) * 10);
                 int p = w % 10;
                 w /= 10;
+                String t = "" + w + "." + p + ", " + hint.toString();
+                System.err.println(t);
+                System.err.flush();
                 s += w + "." + p;
                 s += ", " + hint.toString();
                 if (hint instanceof IndirectHint) {
                     IndirectHint iHint = (IndirectHint)hint;
                     if ( iHint.isWorth() ) {
                         int countCells = 0;
-                        Map<Cell, BitSet> remPots = iHint.getRemovablePotentials();
-                        for (Cell cell : remPots.keySet()) {
-                            BitSet cellPots = remPots.get(cell);
+                        Map<Cell, BitSet> getPots = iHint.getRemovablePotentials();
+                        Map<Integer, BitSet> remPots = new TreeMap<Integer, BitSet>();
+                        for (Cell cell : getPots.keySet()) {
+                            remPots.put(cell.getY()*6+cell.getX(), getPots.get(cell));
+                        }
+                        for (int cellindex : remPots.keySet()) {
+                            BitSet cellPots = remPots.get(cellindex);
                             if ( countCells == 0 ) { s += ":"; }
                             if ( countCells > 0 ) { s += ","; }
-                            s += " r" + (cell.getY()+1) + "c" + (cell.getX()+1) + "<>";
+                            s += " r" + (cellindex/6+1) + "c" + (cellindex%6+1) + "<>";
                             int countPots = 0;
                             for (int pv=1; pv<=6; pv++ ) {
                                 if ( cellPots.get( pv) ) { if ( countPots != 0 ) { s += ","; } s += pv; countPots++; }

@@ -1,5 +1,11 @@
 Changes:
 
+20211123
+- change to hints output
+
+20211109
+- detect possible corrupted config (json) file
+
 20211018
 - a few cosmetic changes
 
