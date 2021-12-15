@@ -14,11 +14,21 @@ java.exe -jar Sudoku6Explainer.jar
 ```
 ## Usage - serate
 ```
-java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.serate --format="%g ED=%r/%p/%d" --input=puzzles.txt --output=puzzles.rated.txt [options]
+java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.serate --format="%g ED=%r/%p/%d" --input=puzzle(s).txt --output=output.txt [options]
 ```
 ## Usage - hints
 ```
-java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.hints --input=puzzle.txt [options]
+java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.hints --input=puzzle(s).txt [options]
+
+java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.hints --input=puzzle(s).txt 1>output.txt
+java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.hints --input=puzzle(s).txt 1>output.txt 2>nul
+```
+STDOUT output (long hints) should (always) be redirected to a file.\
+STDERR output (short hints) is for debug, it shows progress on screen, if not needed redirect this to a file or to nul.
+
+## Usage - analyze (Tester)
+```
+java.exe -Xrs -Xmx500m -cp Sudoku6Explainer.jar diuf.sudoku.test.Tester puzzles.txt puzzles.log
 ```
 ## Options
 None, one or a few of the following:
