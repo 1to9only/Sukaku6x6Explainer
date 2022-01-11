@@ -1,5 +1,8 @@
 Changes:
 
+20220111
+- add chains nodes in hints output
+
 20211123
 - change to hints output
 

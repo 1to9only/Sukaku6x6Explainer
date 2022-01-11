@@ -107,6 +107,18 @@ public class LockingGHint extends IndirectHint implements Rule, HasParentPotenti
         return builder.toString();
     }
 
+    public String toString2() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getName());
+        builder.append(": ");
+        builder.append(Cell.toFullString(this.cells));
+        builder.append(": ");
+        builder.append(value);
+        builder.append(" in ");
+        builder.append(regions[0].toString());
+        return builder.toString();
+    }
+
     @Override
     public String toHtml() {
         String result = HtmlLoader.loadHtml(this, "LockingGHint.html");

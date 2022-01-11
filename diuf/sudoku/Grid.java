@@ -539,6 +539,8 @@ public class Grid {
         @Override
         public abstract String toString();
 
+        public abstract String toString2();
+
         /**
          * Get a string representation of this region
          * @return a string representation of this region
@@ -595,6 +597,11 @@ public class Grid {
         @Override
         public String toString() {
             return "row";
+        }
+
+        @Override
+        public String toString2() {
+            return "row" + " " + (rowNum + 1);
         }
 
         @Override
@@ -656,6 +663,11 @@ public class Grid {
         @Override
         public String toString() {
             return "column";
+        }
+
+        @Override
+        public String toString2() {
+            return "column" + " " + (columnNum + 1);
         }
 
         @Override
@@ -735,6 +747,15 @@ public class Grid {
         }
 
         @Override
+        public String toString2() {
+          if ( isRC23 ) {
+            return "block" + " " + (vNum * 2 + hNum + 1); // 2Rx3C
+          } else {
+            return "block" + " " + (vNum * 3 + hNum + 1); // 3Rx2C
+          }
+        }
+
+        @Override
         public String toFullString() {
           if ( isRC23 ) {
             return toString() + " " + (vNum * 2 + hNum + 1); // 2Rx3C
@@ -788,6 +809,11 @@ public class Grid {
         }
 
         @Override
+        public String toString2() {
+            return "diagonal(/)";
+        }
+
+        @Override
         public String toFullString() {
             return toString() + " " + (diagonalNum + 1);
         }
@@ -833,6 +859,11 @@ public class Grid {
 
         @Override
         public String toString() {
+            return "antidiagonal(\\)";
+        }
+
+        @Override
+        public String toString2() {
             return "antidiagonal(\\)";
         }
 
