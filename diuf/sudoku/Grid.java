@@ -340,15 +340,15 @@ public class Grid {
     }
 
     public Grid.Region getRegionAt(Class<? extends Grid.Region> regionType, int x, int y) {
-        if (regionType.equals(Grid.Row.class))
+        if (Grid.Row.class.equals(regionType))
             return getRowAt(x, y);
-        else if (regionType.equals(Grid.Column.class))
+        else if (Grid.Column.class.equals(regionType))
             return getColumnAt(x, y);
-        else if (regionType.equals(Grid.Block.class))
+        else if (Grid.Block.class.equals(regionType))
             return getBlockAt(x, y);
-        else if (regionType.equals(Grid.Diagonal.class))
+        else if (Grid.Diagonal.class.equals(regionType))
             return getDiagonalAt(x, y);
-        else if (regionType.equals(Grid.AntiDiagonal.class))
+        else if (Grid.AntiDiagonal.class.equals(regionType))
             return getAntiDiagonalAt(x, y);
         else
             return null;
@@ -359,15 +359,15 @@ public class Grid {
     }
 
     public int getRegionNum(Class<? extends Grid.Region> regionType, int x, int y) {
-        if (regionType.equals(Grid.Row.class))
+        if (Grid.Row.class.equals(regionType))
             return getRowAt(x, y).getRowNum();
-        else if (regionType.equals(Grid.Column.class))
+        else if (Grid.Column.class.equals(regionType))
             return getColumnAt(x, y).getColumnNum();
-        else if (regionType.equals(Grid.Block.class))
+        else if (Grid.Block.class.equals(regionType))
             return getBlockAt(x, y).getBlockNum();
-        else if (regionType.equals(Grid.Diagonal.class))
+        else if (Grid.Diagonal.class.equals(regionType))
             return getDiagonalAt(x, y).getDiagonalNum();
-        else if (regionType.equals(Grid.AntiDiagonal.class))
+        else if (Grid.AntiDiagonal.class.equals(regionType))
             return getAntiDiagonalAt(x, y).getAntiDiagonalNum();
         else
             return -1;
@@ -440,7 +440,7 @@ public class Grid {
              * This code is not really used. The method is always overriden
              */
             for (int i = 0; i < 6; i++) {
-                if (getCell(i).equals(cell))
+                if (cell.equals(getCell(i)))
                     return i;
             }
             return -1;

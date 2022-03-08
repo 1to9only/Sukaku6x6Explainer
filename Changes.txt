@@ -1,5 +1,8 @@
 Changes:
 
+20220308
+- changes in Chaining.java, may affect some ratings!
+
 20220111
 - add chains nodes in hints output
 
