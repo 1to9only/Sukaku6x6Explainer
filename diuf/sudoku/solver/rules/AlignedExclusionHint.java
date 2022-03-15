@@ -37,7 +37,7 @@ public class AlignedExclusionHint extends IndirectHint implements Rule {
     }
 
     private BitSet getReleventCombinationValues() {
-        BitSet result = new BitSet(10);
+        BitSet result = new BitSet(6);
         for (int[] combination : lockedCombinations.keySet()) {
             if (isRelevent(combination)) {
                 for (int i = 0; i < combination.length; i++)
@@ -176,7 +176,7 @@ public class AlignedExclusionHint extends IndirectHint implements Rule {
     }
 
     private BitSet getRemovableValues() {
-        BitSet result = new BitSet(10);
+        BitSet result = new BitSet(6);
         for (BitSet values : getRemovablePotentials().values())
             result.or(values);
         return result;

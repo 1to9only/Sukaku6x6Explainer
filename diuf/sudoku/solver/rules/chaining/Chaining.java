@@ -965,7 +965,7 @@ public class Chaining implements IndirectHintProducer {
         if (!target.isOn)
             removable.put(target.cell, SingletonBitSet.create(target.value));
         else {
-            BitSet values = new BitSet(10);
+            BitSet values = new BitSet(6);
             for (int value = 1; value <= 6; value++) {
                 if (value != target.value && target.cell.hasPotentialValue(value))
                     values.set(value);

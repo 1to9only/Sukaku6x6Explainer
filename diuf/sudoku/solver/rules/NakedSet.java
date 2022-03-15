@@ -90,7 +90,7 @@ public class NakedSet implements IndirectHintProducer {
         // Build concerned cell potentials
         Map<Cell,BitSet> cellPValues = new LinkedHashMap<Cell,BitSet>();
         for (Cell cell : cells) {
-            BitSet potentials = new BitSet(10);
+            BitSet potentials = new BitSet(6);
             potentials.or(commonPotentialValues);
             potentials.and(cell.getPotentialValues());
             cellPValues.put(cell, potentials);
@@ -101,7 +101,7 @@ public class NakedSet implements IndirectHintProducer {
             Cell otherCell = region.getCell(i);
             if (!Arrays.asList(cells).contains(otherCell)) {
                 // Get removable potentials
-                BitSet removablePotentials = new BitSet(10);
+                BitSet removablePotentials = new BitSet(6);
                 for (int value = 1; value <= 6; value++) {
                     if (commonPotentialValues.get(value) && otherCell.hasPotentialValue(value))
                         removablePotentials.set(value);

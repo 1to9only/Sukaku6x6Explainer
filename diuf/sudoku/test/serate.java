@@ -197,10 +197,10 @@ public class serate {
                     System.exit(0);
                     break;
 
-                case '2':   // R2xC3
+                case '2':   // 2Rx3C
                     Settings.getInstance().setRC23(true);
                     break;
-                case '3':   // R3xC2
+                case '3':   // 3Rx2C
                     Settings.getInstance().setRC23(false);
                     break;
 

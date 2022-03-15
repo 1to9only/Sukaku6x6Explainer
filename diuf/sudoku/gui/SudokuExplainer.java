@@ -171,7 +171,7 @@ public class SudokuExplainer {
                 BitSet removable = removablePotentials.get(cell);
                 BitSet current = removedPotentials.get(cell);
                 if (current == null) {
-                    current = new BitSet(10);
+                    current = new BitSet(6);
                     removedPotentials.put(cell, current);
                 }
                 current.or(removable);

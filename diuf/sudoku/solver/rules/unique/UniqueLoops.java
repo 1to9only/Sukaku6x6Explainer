@@ -62,7 +62,7 @@ public class UniqueLoops implements IndirectHintProducer {
 //a                 assert v1 > 0 && v2 > 0;
                     List<Cell> tempLoop = new ArrayList<Cell>();
                     Collection<List<Cell>> results = new ArrayList<List<Cell>>();
-                    checkForLoops(grid, cell, v1, v2, tempLoop, 2, new BitSet(10), null, results);
+                    checkForLoops(grid, cell, v1, v2, tempLoop, 2, new BitSet(6), null, results);
                     for (List<Cell> loop : results) {
                         // Potential loop found. Check validity
                         if (isValidLoop(grid, loop)) {
@@ -79,7 +79,7 @@ public class UniqueLoops implements IndirectHintProducer {
                                     result.add(hint);
                             } else if (extraCells.size() > 2) {
                                 // Only type 2 is possible
-                                BitSet extraValues = new BitSet(10);
+                                BitSet extraValues = new BitSet(6);
                                 for (Cell c : extraCells)
                                     extraValues.or(c.getPotentialValues());
                                 extraValues.clear(v1);
@@ -228,7 +228,7 @@ public class UniqueLoops implements IndirectHintProducer {
     private UniqueLoopHint createType1Hint(List<Cell> loop, Cell rescueCell,
             int v1, int v2) {
         Map<Cell, BitSet> removable = new HashMap<Cell, BitSet>();
-        BitSet values = new BitSet(10);
+        BitSet values = new BitSet(6);
         values.set(v1);
         values.set(v2);
         removable.put(rescueCell, values);
@@ -284,7 +284,7 @@ public class UniqueLoops implements IndirectHintProducer {
         extra.clear(v1);
         extra.clear(v2);
         // Look for Naked and hidden Sets. Iterate on degree
-        for (int degree = extra.cardinality(); degree <= 5; degree++) {
+        for (int degree = extra.cardinality(); degree <= 4; degree++) {
             for (Class<? extends Grid.Region> regionType : grid.getRegionTypes()) {
                 Grid.Region region = grid.getRegionAt(regionType, c1);
               if ( region != null ) {
@@ -341,7 +341,7 @@ public class UniqueLoops implements IndirectHintProducer {
 
                     if (degree * 2 < nbEmptyCells) {
                         // Look for hidden sets
-                        int[] remValues = new int[5 - extra.cardinality()];
+                        int[] remValues = new int[4 - extra.cardinality()];
                         for (int value = 1, dstIndex = 0; value <= 6; value++) {
                             if (value != v1 && value != v2 && !extra.get(value))
                                 remValues[dstIndex++] = value;
@@ -364,7 +364,7 @@ public class UniqueLoops implements IndirectHintProducer {
                                     CommonTuples.searchCommonTupleLight(potentialIndexes, degree);
                                 if (commonPotentialPositions != null) {
                                     // Potential hidden set found
-                                    BitSet hiddenValues = new BitSet(10);
+                                    BitSet hiddenValues = new BitSet(6);
                                     for (int i = 0; i < values.length; i++)
                                         hiddenValues.set(values[i]);
                                     UniqueLoopHint hint = createType3HiddenHint(loop, v1, v2, extra, hiddenValues, region,
@@ -402,7 +402,7 @@ public class UniqueLoops implements IndirectHintProducer {
             if (potentialIndexes.get(i)) {
                 Cell cell = region.getCell(i);
                 if (!cell.equals(c1) && !cell.equals(c2)) {
-                    BitSet values = new BitSet(10);
+                    BitSet values = new BitSet(6);
                     for (int value = 1; value <= 6; value++) {
                         if (!hiddenValues.get(value) && cell.hasPotentialValue(value)) {
                             values.set(value);
@@ -445,7 +445,7 @@ public class UniqueLoops implements IndirectHintProducer {
             if (!Arrays.asList(cells).contains(otherCell)
                     && !c1.equals(otherCell) && !c2.equals(otherCell)) {
                 // Get removable potentials
-                BitSet removablePotentials = new BitSet(10);
+                BitSet removablePotentials = new BitSet(6);
                 for (int value = 1; value <= 6; value++) {
                     if (commonPotentialValues.get(value) && otherCell.hasPotentialValue(value))
                         removablePotentials.set(value);

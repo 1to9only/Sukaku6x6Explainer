@@ -20,7 +20,7 @@ public class NumberOfValues implements WarningHintProducer {
 
     public void getHints(Grid grid, HintsAccumulator accu)
             throws InterruptedException {
-        BitSet values = new BitSet(10);
+        BitSet values = new BitSet(6);
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                 Cell cell = grid.getCell(x, y);

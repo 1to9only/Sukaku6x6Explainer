@@ -52,7 +52,7 @@ public class Fisherman implements IndirectHintProducer {
             int[] indexes = perm.nextBitNums();
 //a         assert indexes.length == degree;
 
-            BitSet myIndexes = new BitSet(10);
+            BitSet myIndexes = new BitSet(6);
             for (int i = 0; i < indexes.length; i++)
                 myIndexes.set(indexes[i]);
 

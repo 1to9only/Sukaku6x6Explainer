@@ -81,7 +81,7 @@ public class HiddenSetHint extends IndirectHint implements Rule, HasParentPotent
 
     public Collection<Potential> getRuleParents(Grid initialGrid, Grid currentGrid) {
         Collection<Potential> result = new ArrayList<Potential>();
-        BitSet myPositions = new BitSet(10);
+        BitSet myPositions = new BitSet(6);
         for (int i = 0; i < values.length; i++)
             myPositions.or(region.getPotentialPositions(values[i]));
         for (int i = 0; i < 6; i++) {

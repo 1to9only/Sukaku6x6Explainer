@@ -471,7 +471,7 @@ public class Grid {
          * @see Cell#getPotentialValues()
          */
         public BitSet getPotentialPositions(int value) {
-            BitSet result = new BitSet(10);
+            BitSet result = new BitSet(6);
             for (int index = 0; index < 6; index++) {
             //  result.set(index, getCell(index).hasPotentialValue(value));
                 if ( getCell(index).hasPotentialValue(value) ) {

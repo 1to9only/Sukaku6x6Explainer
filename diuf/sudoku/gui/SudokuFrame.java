@@ -185,7 +185,7 @@ public class SudokuFrame extends JFrame implements Asker {
             if (currentHint instanceof DirectHint) {
                 DirectHint dHint = (DirectHint)currentHint;
                 sudokuPanel.setGreenCells(Collections.singleton(dHint.getCell()));
-                BitSet values = new BitSet(10);
+                BitSet values = new BitSet(6);
                 values.set(dHint.getValue());
                 sudokuPanel.setGreenPotentials(Collections.singletonMap(
                         dHint.getCell(), values));

@@ -28,7 +28,7 @@ public class NoDoubles implements WarningHintProducer {
             for (int i = 0; i < regionmax; i++) {
                 final Grid.Region region = regions[i];
               if ( region != null ) {
-                BitSet values = new BitSet(10);
+                BitSet values = new BitSet(6);
 
                 // Iterate on cells of a region
                 for (int j = 0; j < 6; j++) {
@@ -77,7 +77,7 @@ public class NoDoubles implements WarningHintProducer {
             for (int i = 0; i < regionmax; i++) {
                 final Grid.Region region = regions[i];
               if ( region != null ) {
-                BitSet values = new BitSet(10);
+                BitSet values = new BitSet(6);
 
                 // Iterate on cells of a region
                 for (int j = 0; j < 6; j++) {

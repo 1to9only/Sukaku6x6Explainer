@@ -1,5 +1,8 @@
 Changes:
 
+20220315
+- some code tidy up
+
 20220308
 - changes in Chaining.java, may affect some ratings!
 
