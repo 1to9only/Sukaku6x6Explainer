@@ -1,5 +1,8 @@
 Changes:
 
+20220412
+- various small changes
+
 20220322
 - add fixed lksudoku's fix to Chaining
 - add step timings in hints output

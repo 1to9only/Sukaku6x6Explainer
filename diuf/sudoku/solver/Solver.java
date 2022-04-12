@@ -603,7 +603,7 @@ public class Solver {
             diamond = 0.0;
             while (!isSolved()) {
                 SingleHintAccumulator accu = new SingleHintAccumulator();
-                long tt = System.currentTimeMillis(); long hh, mm, ss, ms;
+        //      long tt = System.currentTimeMillis(); long hh, mm, ss, ms;
                 try {
                     for (HintProducer producer : directHintProducers)
                         producer.getHints(grid, accu);
@@ -618,7 +618,7 @@ public class Solver {
                     for (IndirectHintProducer producer : experimentalHintProducers)
                         producer.getHints(grid, accu);
                 } catch (InterruptedException willHappen) {}
-                tt = System.currentTimeMillis() - tt;
+        //      tt = System.currentTimeMillis() - tt;
                 Hint hint = accu.getHint();
                 if (hint == null) {
                     difficulty = 20.0;
@@ -637,14 +637,14 @@ public class Solver {
                     s += (n==0)?".":n;
                 }
                 s += " ";
-                ms= tt % 1000; tt = tt / 1000;
-                ss= tt % 60;   tt = tt / 60;
-                mm= tt % 60;   hh = tt / 60;
-            //  if ( hh < 10 ) { s += "0"; } s += "" + hh + ":";
-                if ( mm < 10 ) { s += "0"; } s += "" + mm + ":";
-                if ( ss < 10 ) { s += "0"; } s += "" + ss + ".";
-                if ( ms < 100) { s += "0"; }
-                if ( ms < 10 ) { s += "0"; } s += "" + ms + " ";
+        //      ms= tt % 1000; tt = tt / 1000;
+        //      ss= tt % 60;   tt = tt / 60;
+        //      mm= tt % 60;   hh = tt / 60;
+        //  //  if ( hh < 10 ) { s += "0"; } s += "" + hh + ":";
+        //      if ( mm < 10 ) { s += "0"; } s += "" + mm + ":";
+        //      if ( ss < 10 ) { s += "0"; } s += "" + ss + ".";
+        //      if ( ms < 100) { s += "0"; }
+        //      if ( ms < 10 ) { s += "0"; } s += "" + ms + " ";
                 int w = (int)((ruleDiff + 0.05) * 10);
                 int p = w % 10;
                 w /= 10;
