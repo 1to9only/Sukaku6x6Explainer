@@ -963,7 +963,6 @@ public class SudokuPanel extends JPanel {
     private void paintCellsPotentials(Graphics g) {
         Rectangle clip = g.getClipBounds();
         Rectangle cellRect = new Rectangle();
-        boolean paintIt = Settings.getInstance().isShowingCandidates();
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                 readCellRectangle(x, y, cellRect);
@@ -973,6 +972,7 @@ public class SudokuPanel extends JPanel {
                     int index = 0;
                     g.setFont(smallFont);
                     for (int value = 1; value <= 6; value++) {
+                        boolean paintIt = Settings.getInstance().isShowingCandidates();
                         if (cell == this.selectedCell && value == this.focusedCandidate) {
                             // Paint magenta selection
                             g.setColor(Color.magenta);
@@ -1008,7 +1008,7 @@ public class SudokuPanel extends JPanel {
     }
 
     private void paint2CellsPotentials(Graphics g, int adj) {
-      if (Settings.getInstance().isShowingCandidates()) {
+        boolean paintIt = Settings.getInstance().isShowingCandidates();
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                     Cell cell = grid.getCell(x, y);
@@ -1021,18 +1021,23 @@ public class SudokuPanel extends JPanel {
                             + (index % 3) * (CELL_INNER_SIZE / 3) + CELL_INNER_SIZE / 6;
                             int cy = y * CELL_OUTER_SIZE + CELL_PAD
                             + (index / 3) * (CELL_INNER_SIZE / 3) + CELL_INNER_SIZE / 6;
-                            init2PotentialColor(g, cell, value);
+                            boolean isHighlighted = init2PotentialColor(g, cell, value);
                           if ( !Settings.getInstance().isAlphabet() ) {
-                            drawStringCentered(g, "" + value, cx+adj, cy+adj);
+                            if (isHighlighted)
+                                drawStringCentered3D(g, "" + value, cx+adj, cy+adj);
+                            else if (paintIt)
+                                drawStringCentered(g, "" + value, cx+adj, cy+adj);
                           } else {
-                            drawStringCentered(g, ""+(char)('A'-1+value), cx+adj, cy+adj);
+                            if (isHighlighted)
+                                drawStringCentered3D(g, ""+(char)('A'-1+ value), cx+adj, cy+adj);
+                            else if (paintIt)
+                                drawStringCentered(g, ""+(char)('A'-1+value), cx+adj, cy+adj);
                           }
                         }
                         index++;
                     }
             }
         }
-      }
     }
 
     private void paintCellsValues(Graphics g) {
