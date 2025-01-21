@@ -303,10 +303,10 @@ public class Solver {
         //      isUsingAdvanced = true;
                 for (HintProducer producer : advancedHintProducers)
                     gatherProducer(previousHints, result, accu, producer);
-                for (HintProducer producer : experimentalHintProducers) {
-        //          if (result.isEmpty() && Settings.getInstance().isUsingAllTechniques())
-                        gatherProducer(previousHints, result, accu, producer);
-                }
+//xp            for (HintProducer producer : experimentalHintProducers) {
+//xp    //          if (result.isEmpty() && Settings.getInstance().isUsingAllTechniques())
+//xp                    gatherProducer(previousHints, result, accu, producer);
+//xp            }
         //  }
         } catch (InterruptedException willProbablyHappen) {}
     //  if (!isAdvanced)
@@ -346,12 +346,12 @@ public class Solver {
                         producer.getHints(grid, accu);
                 }
             }
-            if (result.isEmpty()) {
-                for (IndirectHintProducer producer : experimentalHintProducers) {
-        //          if (result.isEmpty() && Settings.getInstance().isUsingAllTechniques())
-                        producer.getHints(grid, accu);
-                }
-            }
+//xp        if (result.isEmpty()) {
+//xp            for (IndirectHintProducer producer : experimentalHintProducers) {
+//xp    //          if (result.isEmpty() && Settings.getInstance().isUsingAllTechniques())
+//xp                    producer.getHints(grid, accu);
+//xp            }
+//xp        }
         } catch (InterruptedException cannotHappen) {}
         normalPriority(oldPriority);
         return result;
@@ -389,12 +389,12 @@ public class Solver {
                         producer.getHints(grid, accu);
                 }
             }
-            if (result.isEmpty()) {
-                for (IndirectHintProducer producer : experimentalHintProducers) {
-        //          if (result.isEmpty() && Settings.getInstance().isUsingAllTechniques())
-                        producer.getHints(grid, accu);
-                }
-            }
+//xp        if (result.isEmpty()) {
+//xp            for (IndirectHintProducer producer : experimentalHintProducers) {
+//xp    //          if (result.isEmpty() && Settings.getInstance().isUsingAllTechniques())
+//xp                    producer.getHints(grid, accu);
+//xp            }
+//xp        }
         } catch (InterruptedException cannotHappen) {}
         normalPriority(oldPriority);
         return result;
@@ -455,10 +455,10 @@ public class Solver {
             //      isUsingAdvanced = true;
                     for (IndirectHintProducer producer : advancedHintProducers)
                         producer.getHints(grid, accu);
-                    for (IndirectHintProducer producer : experimentalHintProducers) {
-            //          if (Settings.getInstance().isUsingAllTechniques())
-                            producer.getHints(grid, accu);
-                    }
+//xp                for (IndirectHintProducer producer : experimentalHintProducers) {
+//xp        //          if (Settings.getInstance().isUsingAllTechniques())
+//xp                        producer.getHints(grid, accu);
+//xp                }
             //  }
             } catch (InterruptedException willHappen) {}
             Hint hint = accu.getHint();
@@ -507,9 +507,9 @@ public class Solver {
                     for (IndirectHintProducer producer : chainingHintProducers2)
                         producer.getHints(grid, accu);
                     // Only used for generator. Ignore advanced/experimental techniques
-                //if ( max > 9.0 )
-                //  for (IndirectHintProducer producer : advancedHintProducers)
-                //      producer.getHints(grid, accu);
+                  if ( max > 9.0 )
+                    for (IndirectHintProducer producer : advancedHintProducers)
+                        producer.getHints(grid, accu);
                 //if ( max > 9.5 )
                 //  for (IndirectHintProducer producer : experimentalHintProducers)
                 //      producer.getHints(grid, accu);
@@ -557,8 +557,8 @@ public class Solver {
                         producer.getHints(grid, accu);
                     for (IndirectHintProducer producer : advancedHintProducers)
                         producer.getHints(grid, accu);
-                    for (IndirectHintProducer producer : experimentalHintProducers)
-                        producer.getHints(grid, accu);
+//xp                for (IndirectHintProducer producer : experimentalHintProducers)
+//xp                    producer.getHints(grid, accu);
                 } catch (InterruptedException willHappen) {}
                 Hint hint = accu.getHint();
                 if (hint == null) {
@@ -615,8 +615,8 @@ public class Solver {
                         producer.getHints(grid, accu);
                     for (IndirectHintProducer producer : advancedHintProducers)
                         producer.getHints(grid, accu);
-                    for (IndirectHintProducer producer : experimentalHintProducers)
-                        producer.getHints(grid, accu);
+//xp                for (IndirectHintProducer producer : experimentalHintProducers)
+//xp                    producer.getHints(grid, accu);
                 } catch (InterruptedException willHappen) {}
         //      tt = System.currentTimeMillis() - tt;
                 Hint hint = accu.getHint();
